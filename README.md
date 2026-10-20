@@ -8,7 +8,7 @@ Vox is an AAC (augmentative and alternative communication) app for people who ca
 write but have lost their voice, for example after a stroke, with ALS/MND, after laryngeal
 surgery, or temporarily after an operation.
 
-**[Download and listen to the voice →](https://martin-sedrmajer.github.io/vox-aac/)**
+**[Get it from Microsoft Store](https://apps.microsoft.com/detail/9P6NKBZXT3VX)** · [portable ZIP](https://github.com/martin-sedrmajer/vox-aac/releases/latest) · [website with a voice sample](https://martin-sedrmajer.github.io/vox-aac/)
 
 ![The Vox window: a text box with a large Speak button, phrase groups and phrase buttons](docs/img/vox-en.webp)
 
