@@ -25,6 +25,11 @@ $modelName = "sherpa-onnx-supertonic-3-tts-int8-2026-05-11"
 $modelUrl = "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/$modelName.tar.bz2"
 $modelLicenseUrl = "https://huggingface.co/Supertone/supertonic-3/raw/main/LICENSE"
 
+# Spuštěný Vox z dist\Vox drží soubory a nejdou smazat.
+$running = Get-Process Vox -ErrorAction SilentlyContinue |
+    Where-Object { $_.Path -and $_.Path.StartsWith($out, [StringComparison]::OrdinalIgnoreCase) }
+if ($running) { throw "Vox ze složky $out ještě běží. Zavři ho a spusť skript znovu." }
+
 if (Test-Path $out) { Remove-Item $out -Recurse -Force }
 New-Item -ItemType Directory -Force $cache | Out-Null
 
