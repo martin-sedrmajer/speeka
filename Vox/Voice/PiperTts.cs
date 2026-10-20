@@ -22,7 +22,7 @@ public sealed class PiperTts : IDisposable
     /// Počet kroků výpočtu Supertonicu: víc = čistší zvuk, méně = rychlejší (důležité na slabších telefonech).
     /// Nastavuje spojka podle Nastavení a platformy.
     /// </summary>
-    public int SupertonicSteps { get; set; } = 8;
+    public int SupertonicSteps { get; set; } = 12;
 
     public byte[] Synthesize(string text, VoiceSettings v, string lang)
     {

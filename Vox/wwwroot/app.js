@@ -994,7 +994,7 @@ function fillSettingsForm(s) {
   tr.add(new Option(t("noTranslation"), ""));
   for (const l of state.languages) tr.add(new Option(l.native, l.code));
   tr.value = s.translationLanguage || "";
-  $("synthSteps").value = String([3, 5, 8].includes(s.synthesisSteps) ? s.synthesisSteps : 0);
+  $("synthSteps").value = String([3, 6, 12].includes(s.synthesisSteps) ? s.synthesisSteps : 0);
   $("enterSpeaks").checked = s.enterSpeaks !== false;
   $("clearAfterSpeak").checked = s.clearAfterSpeak !== false;
   $("lockSettings").checked = !!s.lockSettings;

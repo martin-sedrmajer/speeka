@@ -11,7 +11,8 @@ public sealed class WindowsPlatform : IVoxPlatform
 
     public string AppVersion => typeof(WindowsPlatform).Assembly.GetName().Version?.ToString(3) ?? "";
 
-    public int DefaultSynthesisSteps => 8;
+    // na počítači je výkonu dost; 12 kroků vyhladí chvění v intonaci
+    public int DefaultSynthesisSteps => 12;
 
     public IReadOnlyList<string> SystemVoices() => WindowsTts.Voices();
 

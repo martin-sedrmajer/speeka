@@ -93,10 +93,10 @@ jazykem; ostatními jazyky mluví přibalený Supertonic
 se stejnou rychlostí (Bridge.SpeechVoice). Hlas
 Windows mluví vším, co uživatel zvolí.
 Kvalita hlasu (Nastavení → Hlas): počet kroků
-výpočtu Supertonicu. Automaticky = 8 ve Windows,
-4 na Androidu; dál Nejvyšší 8, Vyvážená 5,
-Nejrychlejší 3. Méně kroků = rychlejší, o kousek
-méně čistý zvuk.
+výpočtu Supertonicu. Automaticky = 12 ve Windows,
+4 na Androidu; dál Nejvyšší 12, Vyvážená 6,
+Nejrychlejší 3. Méně kroků = rychlejší, ale
+v intonaci je slyšet chvění.
 Po startu a po změně hlasu se hlas načte dopředu
 (stav v horní liště), aby první věta nečekala.
 
