@@ -22,21 +22,21 @@ $version = $csproj.Project.PropertyGroup | ForEach-Object { $_.Version } | Where
 if (-not $version) { $version = "0.0.0" }
 
 $dist = Join-Path $root "dist"
-$out = Join-Path $dist "Vox"
+$out = Join-Path $dist "Speeka"
 $cache = Join-Path $dist "cache"
 $modelName = "sherpa-onnx-supertonic-3-tts-int8-2026-05-11"
 $modelUrl = "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/$modelName.tar.bz2"
 $modelLicenseUrl = "https://huggingface.co/Supertone/supertonic-3/raw/main/LICENSE"
 
-# Spuštěný Vox z dist\Vox drží soubory a nejdou smazat.
-$running = Get-Process Vox -ErrorAction SilentlyContinue |
+# Spuštěná Speeka z dist\Speeka drží soubory a nejdou smazat.
+$running = Get-Process Speeka -ErrorAction SilentlyContinue |
     Where-Object { $_.Path -and $_.Path.StartsWith($out, [StringComparison]::OrdinalIgnoreCase) }
-if ($running) { throw "Aplikace (Vox.exe) ze složky $out ještě běží. Zavři ji a spusť skript znovu." }
+if ($running) { throw "Aplikace (Speeka.exe) ze složky $out ještě běží. Zavři ji a spusť skript znovu." }
 
 if (Test-Path $out) { Remove-Item $out -Recurse -Force }
 New-Item -ItemType Directory -Force $cache | Out-Null
 
-Write-Host "Sestavuji Vox $version ($Runtime)..."
+Write-Host "Sestavuji Speeku $version ($Runtime)..."
 dotnet publish $project -c Release -r $Runtime --self-contained true -p:DebugType=None -o $out
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish selhal." }
 

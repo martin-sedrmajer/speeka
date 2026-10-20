@@ -45,7 +45,7 @@ public static class AppPaths
     }
 
     /// <summary>
-    /// Hlas přibalený k aplikaci: ve Windows složka voices vedle Vox.exe. Android model po prvním
+    /// Hlas přibalený k aplikaci: ve Windows složka voices vedle Speeka.exe. Android model po prvním
     /// spuštění rozbalí do vlastní složky a nastaví ji sem.
     /// </summary>
     public static string? BundledVoicesOverride { get; set; }

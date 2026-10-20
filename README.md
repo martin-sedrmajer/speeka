@@ -7,8 +7,8 @@ Speeka is an AAC (augmentative and alternative communication) app for anyone who
 can't speak, for good or just for a while: after throat surgery, after a stroke, with ALS/MND,
 with a lost voice, or in a hospital abroad where nobody understands you.
 
-The project used to be called Vox; the code still uses that name internally (`Vox.exe`,
-`Vox.Mobile`, the `Vox` namespace).
+The project used to be called Vox; the code still uses that name internally (`Vox.Mobile`,
+the `Vox` namespace, the `%APPDATA%\Vox` data folder). The program file is `Speeka.exe`.
 
 **[Get it from Microsoft Store](https://apps.microsoft.com/detail/9P6NKBZXT3VX)** · [portable ZIP](https://github.com/martin-sedrmajer/speeka/releases/latest) · [website with a voice sample](https://martin-sedrmajer.github.io/speeka/)
 

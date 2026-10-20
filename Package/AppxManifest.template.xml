@@ -25,7 +25,7 @@
   </Resources>
 
   <Applications>
-    <Application Id="Vox" Executable="Vox.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="Vox" Executable="Speeka.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="{{DISPLAY_NAME}}"
         Description="Speeka speaks for you: type or tap a phrase and it says it aloud in a natural voice, in ten languages. Fully offline."

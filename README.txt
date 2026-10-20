@@ -8,8 +8,9 @@ a bez internetu. Samostatný projekt; hlasový kód je
 převzatý ze Sentinelu.
 V obchodech a v aplikaci se jmenuje Speeka; v kódu,
 složkách a souborech zůstává původní název Vox
-(Vox.exe, Vox.Mobile, %APPDATA%\Vox, identita balíčku
+(Vox.Mobile, %APPDATA%\Vox, identita balíčku
 MartinSedrmajer.VoxAAC, ApplicationId ...vox).
+Program ve Windows se jmenuje Speeka.exe.
 
 
 STRUKTURA
@@ -55,13 +56,13 @@ DATA
 ----
 %APPDATA%\Vox\settings.json   nastavení, fráze, historie
 %APPDATA%\Vox\voices\         vlastní hlasy
-voices\ vedle Vox.exe          přibalený hlas (Supertonic 3)
+voices\ vedle Speeka.exe       přibalený hlas (Supertonic 3)
 %LOCALAPPDATA%\Vox\WebView2\  data WebView2
 
 
 HLASY
 -----
-Hledají se ve dvou složkách: voices vedle Vox.exe
+Hledají se ve dvou složkách: voices vedle Speeka.exe
 (přibalený Supertonic 3) a %APPDATA%\Vox\voices
 (hlasy, které si uživatel přidá sám). Každý hlas ve
 vlastní podsložce, formát pro sherpa-onnx.
