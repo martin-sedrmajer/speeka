@@ -104,6 +104,14 @@
   .card p { margin: 0; color: var(--dim); font-size: .98rem; }
   .card .ico { font-size: 1.6rem; line-height: 1; margin-bottom: .6rem; display: block; }
 
+  /* ---------- kde běží ---------- */
+  .plat-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; }
+  .badge { font-size: .78rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .badge.ok { color: var(--accent); }
+  .badge.test { color: var(--focus); }
+  .badge.maybe { color: var(--dim); border-style: dashed; }
+  .card.maybe { opacity: .55; filter: grayscale(1); border-style: dashed; }
+
   ol.steps { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 1rem; counter-reset: s; }
   ol.steps li { counter-increment: s; display: grid; grid-template-columns: 2.6rem 1fr; gap: 1rem; align-items: start; }
   ol.steps li::before {
@@ -198,6 +206,17 @@
     </div>
   </section>
 
+  <section id="zarizeni">
+    <div class="wrap">
+      <h2 data-i18n="platH">Kde Speeka běží</h2>
+      <div class="grid">
+        <div class="card"><div class="plat-head"><span class="ico" aria-hidden="true">💻</span><span class="badge ok" data-i18n="p1b">Ke stažení</span></div><h3>Windows</h3><p data-i18n="p1">Windows 10 a 11 (64bit). Z Microsoft Store, nebo jako přenosná verze bez instalace.</p></div>
+        <div class="card"><div class="plat-head"><span class="ico" aria-hidden="true">📱</span><span class="badge test" data-i18n="p2b">Testuje se</span></div><h3>Android</h3><p data-i18n="p2">Android 7.0 a novější, 64bit telefony a tablety. Teď se ladí, na Google Play bude brzy.</p></div>
+        <div class="card maybe"><div class="plat-head"><span class="ico" aria-hidden="true">🍏</span><span class="badge maybe" data-i18n="p3b">Zvažujeme</span></div><h3 data-i18n="p3h">iPhone a iPad</h3><p data-i18n="p3">Přemýšlíme o tom. Jestli a kdy, to zatím neví nikdo.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <div class="wrap">
       <h2 data-i18n="startH">Jak začít</h2>
@@ -245,6 +264,10 @@
       f6h: "Caregiver lock", f6: "Settings and phrase editing can be locked behind a simple sum, so nothing changes by accident.",
       f7h: "Large and readable", f7: "Three font sizes, dark and high-contrast light themes, big buttons.",
       f8h: "Nothing leaves your device", f8: "Speeka runs fully offline. No account, no cloud, no tracking. What you type stays with you.",
+      platH: "Where Speeka runs",
+      p1b: "Available", p1: "Windows 10 and 11 (64-bit). From Microsoft Store, or as a portable version with no installation.",
+      p2b: "In testing", p2: "Android 7.0 and later, 64-bit phones and tablets. Being polished now, coming to Google Play soon.",
+      p3b: "Thinking about it", p3h: "iPhone and iPad", p3: "We're thinking about it. Whether and when, nobody knows yet.",
       startH: "Getting started",
       s1h: "Install Speeka", s1: "The easiest way is Microsoft Store: one-click install and updates arrive on their own. You'll then find Speeka in the Start menu.",
       s2h: "Or without installing", s2: "The portable version is a ZIP file. It is fairly large because the voice is included. Right-click the file → Extract All and run Vox.exe. Put the folder anywhere, even on a USB stick.",
