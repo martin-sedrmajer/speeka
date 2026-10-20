@@ -151,9 +151,13 @@
       <h1 data-i18n-html="h1">Vox mluví <em>za vás</em>.</h1>
       <p class="lead" data-i18n="lead">Napíšete, co chcete říct, nebo klepnete na připravenou frázi. Vox to řekne přirozeným hlasem, česky i anglicky. Bez internetu, bez účtu a zdarma.</p>
       <div class="cta">
-        <a class="btn primary" href="https://github.com/martin-sedrmajer/vox-aac/releases/latest">
+        <a class="btn primary" href="https://apps.microsoft.com/detail/9P6NKBZXT3VX">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7V6a5 5 0 0 1 10 0v1h3l-1 14H5L4 7h3zm2 0h6V6a3 3 0 0 0-6 0v1z"/></svg>
+          <span data-i18n="store">Získat v Microsoft Store</span>
+        </a>
+        <a class="btn" href="https://github.com/martin-sedrmajer/vox-aac/releases/latest">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4 3.6 3.6V3zM5 19h14v2H5z"/></svg>
-          <span data-i18n="download">Stáhnout pro Windows</span>
+          <span data-i18n="download">Přenosná verze (ZIP)</span>
         </a>
         <button class="btn" type="button" id="listen" aria-pressed="false">
           <svg viewBox="0 0 24 24" aria-hidden="true" id="listenIcon"><path d="M8 5v14l11-7z"/></svg>
@@ -198,11 +202,11 @@
     <div class="wrap">
       <h2 data-i18n="startH">Jak začít</h2>
       <ol class="steps">
-        <li><div><h3 data-i18n="s1h">Stáhněte Vox</h3><p data-i18n="s1">Tlačítkem nahoře stáhnete soubor ZIP. Je větší, protože obsahuje i hlas.</p></div></li>
-        <li><div><h3 data-i18n="s2h">Rozbalte ho</h3><p data-i18n="s2">Pravým tlačítkem na soubor → Extrahovat vše. Složku můžete dát kamkoli, třeba do Dokumentů.</p></div></li>
-        <li><div><h3 data-i18n="s3h">Spusťte Vox.exe</h3><p data-i18n="s3">Nic se neinstaluje. Napište první větu a zmáčkněte Enter.</p></div></li>
+        <li><div><h3 data-i18n="s1h">Nainstalujte Vox</h3><p data-i18n="s1">Nejjednodušší je Microsoft Store: instalace jedním kliknutím a aktualizace přijdou samy. Vox pak najdete v nabídce Start.</p></div></li>
+        <li><div><h3 data-i18n="s2h">Nebo bez instalace</h3><p data-i18n="s2">Přenosnou verzi stáhnete jako ZIP. Je větší, protože obsahuje i hlas. Pravým tlačítkem na soubor → Extrahovat vše a spusťte Vox.exe. Složku můžete dát kamkoli, třeba na flashdisk.</p></div></li>
+        <li><div><h3 data-i18n="s3h">Řekněte první větu</h3><p data-i18n="s3">Napište ji do pole nahoře a zmáčkněte Enter.</p></div></li>
       </ol>
-      <p class="note" data-i18n-html="smart"><strong>Při prvním spuštění</strong> může Windows ukázat hlášku „Systém Windows ochránil váš počítač“. Vox zatím nemá placený digitální podpis. Klikněte na <strong>Další informace</strong> a pak na <strong>Přesto spustit</strong>.</p>
+      <p class="note" data-i18n-html="smart"><strong>U přenosné verze</strong> může Windows při prvním spuštění ukázat hlášku „Systém Windows ochránil váš počítač“. Přenosná verze zatím nemá placený digitální podpis (verze z Microsoft Store tuto hlášku nemá). Klikněte na <strong>Další informace</strong> a pak na <strong>Přesto spustit</strong>.</p>
     </div>
   </section>
 </main>
@@ -224,7 +228,8 @@
       skip: "Skip to content",
       h1: "Vox speaks <em>for you</em>.",
       lead: "Type what you want to say or tap a ready-made phrase. Vox says it out loud in a natural voice, in Czech or English. No internet, no account, free.",
-      download: "Download for Windows",
+      store: "Get it from Microsoft Store",
+      download: "Portable version (ZIP)",
       listen: "Listen to the voice",
       meta: "Windows 10 and 11 (64-bit) · free · open source · Android version planned",
       shotAlt: "The Vox window: a text box with a large blue Speak button at the top, phrase groups and phrase buttons below.",
@@ -241,10 +246,10 @@
       f7h: "Large and readable", f7: "Three font sizes, dark and high-contrast light themes, big buttons.",
       f8h: "Nothing leaves your computer", f8: "Vox runs fully offline. No account, no cloud, no tracking. What you type stays with you.",
       startH: "Getting started",
-      s1h: "Download Vox", s1: "The button at the top downloads a ZIP file. It is fairly large because the voice is included.",
-      s2h: "Extract it", s2: "Right-click the file → Extract All. Put the folder anywhere, for example in Documents.",
-      s3h: "Run Vox.exe", s3: "Nothing to install. Type your first sentence and press Enter.",
-      smart: "<strong>On first launch</strong> Windows may show “Windows protected your PC”. Vox doesn't have a paid code-signing certificate yet. Click <strong>More info</strong> and then <strong>Run anyway</strong>.",
+      s1h: "Install Vox", s1: "The easiest way is Microsoft Store: one-click install and updates arrive on their own. You'll then find Vox in the Start menu.",
+      s2h: "Or without installing", s2: "The portable version is a ZIP file. It is fairly large because the voice is included. Right-click the file → Extract All and run Vox.exe. Put the folder anywhere, even on a USB stick.",
+      s3h: "Say your first sentence", s3: "Type it in the box at the top and press Enter.",
+      smart: "<strong>With the portable version</strong> Windows may show “Windows protected your PC” on first launch. The portable version doesn't have a paid code-signing certificate yet (the Microsoft Store version doesn't show this). Click <strong>More info</strong> and then <strong>Run anyway</strong>.",
       foot1: "Vox is free software under the GPL-3.0 license. Made by <a href=\"https://github.com/martin-sedrmajer\">Martin Sedrmajer</a>.",
       foot2: "Source code and bug reports: <a href=\"https://github.com/martin-sedrmajer/vox-aac\">github.com/martin-sedrmajer/vox-aac</a>",
       foot3: "Voice: Supertonic 3 by Supertone Inc. (OpenRAIL-M license), converted by the sherpa-onnx project.",
