@@ -10,7 +10,7 @@
     <RootNamespace>Vox</RootNamespace>
     <AssemblyName>Vox</AssemblyName>
     <PlatformTarget>x64</PlatformTarget>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <ApplicationIcon>Vox.ico</ApplicationIcon>
   </PropertyGroup>
 
