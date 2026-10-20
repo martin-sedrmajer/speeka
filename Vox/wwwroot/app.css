@@ -126,13 +126,16 @@ body.speaking .mark .w3 { animation: wave .5s ease-in-out .3s infinite alternate
 .lang, .seg { display: flex; border: 2px solid var(--line2); border-radius: 10px; overflow: hidden; flex: none; }
 .lang button, .seg button { border: none; border-radius: 0; background: transparent; padding: .45rem .9rem; font-weight: 700; color: var(--dim); }
 .lang button + button, .seg button + button { border-left: 2px solid var(--line2); }
+.lang-row { display: flex; align-items: center; gap: .7rem; margin: .1rem 0 .6rem 1.9rem; }
 .lang button.active, .seg button.active { background: var(--accent); color: var(--on-accent); }
 .seg { margin-bottom: .5rem; }
 .seg button { flex: 1; font-weight: 600; }
 
 /* Flip UI: tlačítko Říct vpravo, skupiny i fráze zarovnané doprava */
 body.flipped .composer-actions { flex-direction: row-reverse; }
-body.flipped .cats { flex-direction: row-reverse; }
+/* lišta skupin se posouvá; zprava doleva přes direction, ať posouvání začíná vpravo */
+body.flipped .cats { direction: rtl; }
+body.flipped .cats button { direction: ltr; }
 body.flipped .board-head { flex-direction: row-reverse; }
 body.flipped .board-title { text-align: right; }
 body.flipped .board { direction: rtl; }
@@ -146,7 +149,7 @@ body.flipped .tile.add { align-items: center; }
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: .9rem;
+  gap: .7rem;
   padding: 1rem 1.2rem 1.2rem;
 }
 
@@ -162,12 +165,31 @@ body.flipped .tile.add { align-items: center; }
 .composer-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
 .composer-actions .primary { flex: 1; min-width: 8rem; font-size: 1.3rem; }
 
-.cats { display: flex; gap: .5rem; flex-wrap: wrap; }
-.cats button { font-weight: 600; }
+/* skupiny v jednom řádku, posouvají se do strany (prstem, kolečkem myši nebo posuvníkem) */
+.cats {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line2) transparent;
+  padding-bottom: .3rem;
+  flex: none;
+}
+.cats button { font-weight: 600; flex: none; white-space: nowrap; scroll-snap-align: start; }
+/* zeslabený okraj ukazuje, že lišta pokračuje (třídy nastavuje app.js) */
+.cats.more-left { -webkit-mask-image: linear-gradient(to right, transparent, #000 2rem); mask-image: linear-gradient(to right, transparent, #000 2rem); }
+.cats.more-right { -webkit-mask-image: linear-gradient(to left, transparent, #000 2rem); mask-image: linear-gradient(to left, transparent, #000 2rem); }
+.cats.more-left.more-right {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+}
 .cats button.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .cats button.add { border-style: dashed; color: var(--dim); }
 
-.board-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .5rem; }
+.board-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .35rem; }
 .board-head { display: flex; align-items: center; gap: .5rem; }
 .board-title { flex: 1; color: var(--dim); font-size: .95rem; }
 .board-tools { display: flex; gap: .4rem; }
@@ -179,7 +201,8 @@ body.editing #btnEdit { color: var(--accent); border-color: var(--accent); }
   overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  grid-auto-rows: minmax(5.2rem, auto);
+  /* výška řádku podle textu, i když se mřížka nevejde a posouvá se */
+  grid-auto-rows: min-content;
   gap: .7rem;
   align-content: start;
   padding: 2px;
@@ -192,6 +215,7 @@ body.editing #btnEdit { color: var(--accent); border-color: var(--accent); }
   align-items: flex-start;
   text-align: left;
   gap: .25rem;
+  min-height: 5.2rem;
   padding: .8rem 1rem;
   border-radius: 14px;
   background: var(--panel);
@@ -250,6 +274,8 @@ body.editing .tile:not(.add)::after { content: "✎ upravit"; font-size: .75rem;
 .block:last-child { border-bottom: none; }
 .block h3 { margin: 0 0 .7rem; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
 
+/* atribut hidden musí vyhrát i nad display z pravidel níž (např. label) */
+[hidden] { display: none !important; }
 label { display: block; margin-bottom: .8rem; font-size: .92rem; color: var(--dim); }
 label > input, label > select, label > textarea { margin-top: .3rem; color: var(--text); }
 label.check { display: flex; align-items: center; color: var(--text); }
@@ -291,10 +317,30 @@ label.check { display: flex; align-items: center; color: var(--text); }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 @media (max-width: 640px) {
-  .top { padding: .5rem .8rem; }
+  .top { padding: .5rem .8rem; gap: .5rem; flex-wrap: wrap; }
   .main { padding: .8rem; }
   .board { grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
   .grid2 { grid-template-columns: 1fr; }
+
+  /* telefon: stav hlasu jen při načítání nebo chybě, na vlastním řádku */
+  .voice-status { order: 5; flex-basis: 100%; font-size: .8rem; }
+  .voice-status.ready, .voice-status:empty { display: none; }
+  .top-actions { margin-left: auto; }
+  .lang button { padding: .4rem .7rem; }
+
+  /* tlačítka jen s ikonou (popis zůstává v title pro čtečky obrazovky) */
+  #btnSettings, #btnRepeat, #btnClear, #btnStopTop { font-size: 0; min-width: 3rem; }
+  #btnSettings::before { content: "⚙"; font-size: 1.35rem; }
+  #btnRepeat::before { content: "↻"; font-size: 1.35rem; }
+  #btnClear::before { content: "✕"; font-size: 1.2rem; }
+  #btnStopTop::before { content: "■"; font-size: 1.1rem; }
+  .composer-actions { flex-wrap: nowrap; }
+  .composer-actions .primary { min-width: 0; }
+  button.big { padding: .8rem 1rem; }
+}
+
+@media (max-width: 380px) {
+  .name { display: none; }
 }
 
 /* ---------- O aplikaci ---------- */

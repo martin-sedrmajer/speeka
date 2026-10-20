@@ -11,6 +11,8 @@ STRUKTURA
 ---------
 Vox.sln
 build-portable.ps1  přenosné sestavení s přibaleným hlasem
+build-android.ps1   sestavení pro Android (emulátor, Google Play)
+Vox.Mobile\         aplikace pro Android (.NET MAUI)
 LICENSE             GPL-3.0 (licence Voxu)
 LICENSE-EXCEPTION.txt  výjimka pro WebView2
 THIRD-PARTY-NOTICES.txt  licence převzatých částí
@@ -40,6 +42,8 @@ Vox\
     Wav             převod vzorků na WAV
   wwwroot\          rozhraní (index.html, app.css, app.js)
   Vox.ico
+  WindowsPlatform   části jen pro Windows (hlasy SAPI,
+                    Průzkumník) pro sdílenou spojku
 
 
 DATA
@@ -73,7 +77,8 @@ Licence modelu OpenRAIL-M.
 Windows: hlasy nainstalované v systému (česky
 Microsoft Jakub), robotičtější, ale bez stahování.
 Při prvním spuštění se pro oba jazyky vybere
-Supertonic, mluvčí Muž 2 (M2) s rychlostí 1,15.
+Supertonic, mluvčí Muž 2 (M2), rychlost 1,15
+pro češtinu a 1,0 pro angličtinu.
 Bez Supertonicu: čeština Piper cs_CZ nebo hlas
 Windows, angličtina Kokoro (Heart), jiný hlas nebo
 hlas Windows.
@@ -223,3 +228,38 @@ Ve verzi ze Storu Windows přesměrovává zápisy do
 AppData do složky balíčku; AppPaths.VoicesDirForShell
 proto pro Průzkumník vrací přesměrovanou cestu.
 Zásady ochrany soukromí: docs\privacy.html.
+
+
+ANDROID (Vox.Mobile)
+--------------------
+.NET MAUI pro net10.0-android, Android 7.0 (API 24)
+a novější, procesory arm64 a x64 (emulátor).
+Sdílí kód s Windows verzí: projekt připojuje soubory
+Vox\Bridge.cs, Vox\Core\*.cs a Vox\Voice\PiperTts.cs,
+KokoroVoices.cs a Wav.cs (nekopíruje je). Co je jen
+pro jednu platformu, jde přes Core\IVoxPlatform:
+WindowsPlatform (hlasy SAPI, Průzkumník) a v Androidu
+AndroidPlatform (bez systémových hlasů a bez složky
+pro vlastní hlasy).
+Rozhraní je stejný wwwroot jako ve Windows, zobrazený
+v HybridWebView. app.js pozná hostitele: WebView2
+(window.chrome.webview), nebo HybridWebView (načte
+_framework/hybridwebview.js a zprávy posílá jako text
+JSON). Init nese platform a stránka na Androidu skryje
+volbu hlasu Windows a složku s hlasy. Na úzkém displeji
+(do 640 px) jsou Znovu, Smazat a Nastavení jen ikony
+a stav hlasu se ukazuje jen při načítání nebo chybě.
+Hlas Supertonic je v balíčku jako asset
+(voices/supertonic-3, soubor files.txt se seznamem
+"název|velikost"). Při prvním spuštění, a když se
+seznam změní, ho BundledModel zkopíruje do složky
+aplikace, protože sherpa-onnx potřebuje skutečné
+soubory. Do té doby spojka čeká.
+build-android.ps1 model připraví do
+Vox.Mobile\Resources\Raw\voices (v gitu není)
+a sestaví aplikaci: bez přepínače ladicí verzi rovnou
+do běžícího emulátoru nebo telefonu, s -Release balíček
+.aab do dist\android. Potřebuje .NET 10 SDK, workload
+maui-android, Android SDK a JDK.
+ApplicationId io.github.martinsedrmajer.vox se po
+prvním vydání na Google Play už nesmí měnit.

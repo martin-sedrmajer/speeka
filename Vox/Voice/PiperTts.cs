@@ -141,8 +141,10 @@ public sealed class PiperTts : IDisposable
 
     /// <summary>Výchozí mluvčí Supertonicu: Muž 2 (M2).</summary>
     public const int SupertonicDefaultSpeaker = 6;
-    /// <summary>Výchozí rychlost Supertonicu (výchozí tempo modelu je na rozhovor trochu pomalé).</summary>
-    public const double SupertonicDefaultSpeed = 1.15;
+    /// <summary>Výchozí rychlost Supertonicu pro češtinu (tempo modelu je v češtině na rozhovor trochu pomalé).</summary>
+    public const double SupertonicDefaultSpeedCs = 1.15;
+    /// <summary>Výchozí rychlost Supertonicu pro angličtinu (přirozené tempo modelu).</summary>
+    public const double SupertonicDefaultSpeedEn = 1.0;
 
     // Jazyky, které Supertonic 3 umí; jiný kód by model odmítl.
     private static readonly HashSet<string> SupertonicLangs = new(StringComparer.OrdinalIgnoreCase)

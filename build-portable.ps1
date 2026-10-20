@@ -150,7 +150,10 @@ $layout = Join-Path $dist "msix"
 if (Test-Path $layout) { Remove-Item $layout -Recurse -Force }
 Copy-Item $out $layout -Recurse
 Copy-Item (Join-Path $root "Package\Assets") (Join-Path $layout "Assets") -Recurse
-Remove-Item (Join-Path $layout "Assets\StoreListing-300.png") -ErrorAction SilentlyContinue   # jen pro stránku obchodu
+# obrázky jen pro stránku obchodu (nahrávají se v Partner Center), do balíčku nepatří
+foreach ($storeOnly in "StoreListing-300.png", "StoreBoxArt-1080.png", "StoreLogo-71.png") {
+    Remove-Item (Join-Path $layout "Assets\$storeOnly") -ErrorAction SilentlyContinue
+}
 
 $esc = { param($v) [Security.SecurityElement]::Escape([string]$v) }
 $manifest = Get-Content (Join-Path $root "Package\AppxManifest.template.xml") -Raw -Encoding UTF8

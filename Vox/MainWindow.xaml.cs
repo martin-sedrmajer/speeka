@@ -30,7 +30,7 @@ public partial class MainWindow : Window
                 try { if (!_closed) core.PostWebMessageAsJson(json); }
                 catch { /* okno se zavírá */ }
             });
-        });
+        }, new WindowsPlatform());
 
         Loaded += OnLoaded;
     }

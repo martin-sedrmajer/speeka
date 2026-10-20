@@ -8,3 +8,6 @@ dist/
 
 # soukromé poznámky, nepatří do veřejného repozitáře
 poznamky/
+
+# model pro Android, kopíruje ho build-android.ps1 (velký)
+Vox.Mobile/Resources/Raw/voices/

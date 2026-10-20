@@ -109,4 +109,7 @@ Screenshoty (2360 x 1440, PNG):
 Package\Screenshots\vox-cs.png (česká stránka)
 Package\Screenshots\vox-en.png (anglická stránka)
 
-Ikona obchodu 300 x 300: Package\Assets\StoreListing-300.png
+Store logos (volitelné, nahrávají se jen v Partner Center):
+1:1 Box art 1080 x 1080: Package\Assets\StoreBoxArt-1080.png
+1:1 App tile icon 300 x 300: Package\Assets\StoreListing-300.png
+1:1 71 x 71: Package\Assets\StoreLogo-71.png

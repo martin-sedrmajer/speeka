@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -14,14 +13,16 @@ namespace Vox;
 public sealed class Bridge : IDisposable
 {
     private readonly Action<string> _post;
+    private readonly IVoxPlatform _platform;
     private readonly SettingsStore _settings = new();
     private readonly PiperTts _piper = new();
     private CancellationTokenSource? _speakCts;
     private int _warmupVersion;
 
-    public Bridge(Action<string> post)
+    public Bridge(Action<string> post, IVoxPlatform platform)
     {
         _post = post;
+        _platform = platform;
         if (_settings.Current.UiLanguage != "") Loc.Ui = _settings.Current.UiLanguage;
     }
 
@@ -124,18 +125,17 @@ public sealed class Bridge : IDisposable
                     break;
 
                 case "voices.refresh":
-                    Post(new { type = "voices", voices = VoiceList(), windowsVoices = WindowsTts.Voices() });
+                    Post(new { type = "voices", voices = VoiceList(), windowsVoices = _platform.SystemVoices() });
                     break;
 
                 case "voices.open":
-                    try { Process.Start(new ProcessStartInfo("explorer.exe", $"\"{AppPaths.VoicesDirForShell}\"") { UseShellExecute = true }); }
-                    catch { /* průzkumník se nespustil */ }
+                    _platform.OpenVoicesFolder();
                     break;
             }
         }
         catch (Exception ex)
         {
-            Post(new { type = "toast", text = "Chyba: " + ex.Message });
+            Post(new { type = "toast", text = Loc.T("Chyba: ", "Error: ") + ex.Message });
         }
     }
 
@@ -144,6 +144,11 @@ public sealed class Bridge : IDisposable
     /// <summary>Text po větách převede na zvuk a posílá stránce; první věta zazní, než se dopočítají další.</summary>
     private async Task SpeakAsync(string text, AppSettings s, string lang)
     {
+        // vlastní výslovnost ze slovníku, pak smajlíky (slovník tak může smajlík vyslovit po svém)
+        text = ApplyPronunciation(text, lang == "cs" ? s.PronunciationCs : s.PronunciationEn);
+        text = Emoticons.Speakable(text, lang);
+        if (text.Length == 0) return;   // byly tam jen smajlíky
+
         var cts = new CancellationTokenSource();
         Interlocked.Exchange(ref _speakCts, cts)?.Cancel();
         var token = cts.Token;
@@ -172,9 +177,8 @@ public sealed class Bridge : IDisposable
 
     private byte[] Synthesize(string text, AppSettings s, string lang)
     {
-        text = ApplyPronunciation(text, lang == "cs" ? s.PronunciationCs : s.PronunciationEn);
         var v = s.VoiceFor(lang);
-        if (v.Engine == "windows") return WindowsTts.Synthesize(text, v);
+        if (v.Engine == "windows") return _platform.SynthesizeSystem(text, v);
 
         // Výšku dělá stránka zrychleným přehráním; aby se nezměnilo i tempo, syntéza mluví o to pomaleji.
         var local = new VoiceSettings
@@ -324,23 +328,23 @@ public sealed class Bridge : IDisposable
         if (s.VoiceChosen && s.VoiceCsChosen) return;
         var voices = PiperTts.ListVoices();
         var supertonic = voices.FirstOrDefault(v => PiperTts.IsSupertonic(v.Dir));
-        VoiceSettings SupertonicVoice() => new()
+        VoiceSettings SupertonicVoice(double speed) => new()
         {
             Engine = "local",
             PiperModelDir = supertonic.Dir!,
             PiperSpeaker = PiperTts.SupertonicDefaultSpeaker,
-            PiperSpeed = PiperTts.SupertonicDefaultSpeed
+            PiperSpeed = speed
         };
 
         if (!s.VoiceCsChosen)
         {
             var czech = voices.FirstOrDefault(v => PiperTts.LanguageOf(v.Dir) == "cs");
             s.VoiceCs = supertonic.Dir != null
-                ? SupertonicVoice()
+                ? SupertonicVoice(PiperTts.SupertonicDefaultSpeedCs)
                 : czech.Dir != null
                 // český Piper (Jirka) je nahraný pomalu – rovnou mu přidat tempo
                 ? new VoiceSettings { Engine = "local", PiperModelDir = czech.Dir, PiperSpeed = 1.3 }
-                : new VoiceSettings { Engine = "windows", WindowsVoice = WindowsTts.VoiceFor("cs-CZ") ?? "" };
+                : new VoiceSettings { Engine = "windows", WindowsVoice = _platform.SystemVoiceFor("cs-CZ") ?? "" };
             s.VoiceCsChosen = true;
         }
 
@@ -352,7 +356,7 @@ public sealed class Bridge : IDisposable
 
         if (supertonic.Dir != null)
         {
-            s.Voice = SupertonicVoice();
+            s.Voice = SupertonicVoice(PiperTts.SupertonicDefaultSpeedEn);
             s.VoiceChosen = true;
             _settings.Save(s);
             return;
@@ -391,9 +395,10 @@ public sealed class Bridge : IDisposable
             type = "init",
             settings = _settings.Current,
             voices = VoiceList(),
-            windowsVoices = WindowsTts.Voices(),
-            voicesDir = AppPaths.VoicesDirForShell,
-            version = typeof(Bridge).Assembly.GetName().Version?.ToString(3) ?? ""
+            windowsVoices = _platform.SystemVoices(),
+            voicesDir = _platform.VoicesFolderDisplay,
+            version = _platform.AppVersion,
+            platform = _platform.Name
         });
     }
 
@@ -423,6 +428,12 @@ public sealed class Bridge : IDisposable
             .Where(x => x.label != null)
             .ToList();
     }
+
+    /// <summary>Má tlačítko pro snížení hlasitosti říct text z pole? (Android)</summary>
+    public bool VolumeKeySpeaks => _settings.Current.VolumeKeySpeaks;
+
+    /// <summary>Hardwarové tlačítko požádalo o vyslovení textu z pole; text má stránka.</summary>
+    public void SpeakComposerFromKey() => Post(new { type = "key.speak" });
 
     private void Post(object payload) => _post(JsonSerializer.Serialize(payload, SettingsStore.Json));
 

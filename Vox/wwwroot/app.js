@@ -19,6 +19,20 @@ function lang() {
   return state.settings && state.settings.language === "cs" ? "cs" : "en";
 }
 
+// Na Androidu nejsou hlasy Windows ani složka s vlastními hlasy, ovládání se jim přizpůsobí.
+function applyPlatform(platform) {
+  state.platform = platform;
+  document.body.dataset.platform = platform;
+  if (platform !== "windows") {
+    const win = $("engine").querySelector('option[value="windows"]');
+    if (win) win.remove();
+    $("engine").closest("label").hidden = true;
+    $("btnVoicesFolder").hidden = true;
+    $("voiceHint").hidden = true;
+  }
+  $("volumeKeySpeaks").closest("label").hidden = platform !== "android";
+}
+
 // ---------------------------------------------------------------- jazyk aplikace
 
 // Jazyk ovládání (Nastavení → Jazyk aplikace). Nezávisí na přepínači CZ / EN, ten mění jen řeč a fráze.
@@ -141,9 +155,12 @@ const UI_EN = {
   coral: "Coral",
   purple: "Purple",
   flipUi: "Flip UI: Speak button on the right, phrases aligned to the right",
+  showLanguageSwitch: "Show the CZ / EN switch in the top bar",
+  speechLangHere: "Speech and phrase language",
   enterSpeaks: "Enter speaks the text (new line: Shift+Enter)",
   clearAfterSpeak: "Clear the text box after speaking",
   lockSettings: "Lock settings and phrase editing behind a sum (for caregivers)",
+  volumeKeySpeaks: "The volume down button speaks the text",
   phrasesH: "Phrases and history",
   clearHistory: "Clear history",
   offline: "Vox runs fully offline: no text or sound ever leaves your computer.",
@@ -186,12 +203,28 @@ function applyUi() {
   if (state.version) $("appVersion").textContent = t("version", state.version);
 }
 
+// Hostitel stránky: WebView2 ve Windows, nebo HybridWebView v aplikaci pro Android (.NET MAUI).
+const webview2 = window.chrome && window.chrome.webview;
+
 function send(msg) {
-  if (window.chrome && window.chrome.webview) window.chrome.webview.postMessage(msg);
+  if (webview2) webview2.postMessage(msg);
+  else if (window.HybridWebView) window.HybridWebView.SendRawMessage(JSON.stringify(msg));
 }
 
-if (window.chrome && window.chrome.webview) {
-  window.chrome.webview.addEventListener("message", (e) => onMessage(e.data));
+// Krátké zavibrování telefonu (Android; řídí se systémovým nastavením odezvy na dotyk).
+function haptic() {
+  if (state.platform === "android") send({ type: "haptic" });
+}
+
+// Každé stisknuté tlačítko krátce zavibruje.
+document.addEventListener("pointerdown", (e) => {
+  if (e.button === 0 && e.target.closest("button, select, input[type=checkbox], input[type=radio]")) haptic();
+}, true);
+
+if (webview2) {
+  webview2.addEventListener("message", (e) => onMessage(e.data));
+} else {
+  window.addEventListener("HybridWebViewMessageReceived", (e) => onMessage(JSON.parse(e.detail.message)));
 }
 
 function onMessage(msg) {
@@ -202,6 +235,7 @@ function onMessage(msg) {
       state.windowsVoices = msg.windowsVoices || [];
       state.voicesDir = msg.voicesDir || "";
       state.version = msg.version || "";
+      applyPlatform(msg.platform || "windows");
       applyLook();
       renderAll();
       $("text").focus();
@@ -255,6 +289,10 @@ function onMessage(msg) {
     case "toast":
       toast(msg.text);
       break;
+
+    case "key.speak":   // Android: tlačítko pro snížení hlasitosti
+      speakComposer();
+      break;
   }
 }
 
@@ -266,6 +304,7 @@ function applyLook() {
   document.body.classList.add("fs-" + (s.fontSize || "l"));
   document.body.classList.toggle("light", s.theme === "light");
   document.body.classList.toggle("flipped", !!s.flipUi);
+  $("langTop").hidden = s.showLanguageSwitch === false;
   document.body.dataset.accent = s.accent || "blue";
   document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang()));
   $("text").lang = lang();
@@ -273,7 +312,12 @@ function applyLook() {
   applyUi();
 }
 
-// Přepínač CZ / EN: mění jazyk frází a hlas, kterým se mluví (ovládání ne – to je jazyk aplikace).
+// Když je přepínač CZ / EN v liště schovaný, je k dispozici v Nastavení hned pod volbou.
+$("showLanguageSwitch").addEventListener("change", () => {
+  $("langSettingsRow").hidden = $("showLanguageSwitch").checked;
+});
+
+// Přepínač CZ / EN (v liště i v Nastavení): mění jazyk frází a hlas, kterým se mluví (ovládání ne – to je jazyk aplikace).
 document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => {
   if (!state.settings || b.dataset.lang === lang()) return;
   state.settings.language = b.dataset.lang;
@@ -391,7 +435,34 @@ function renderCats() {
     add.addEventListener("click", () => openCategoryDialog(null));
     nav.appendChild(add);
   }
+  // vybraná skupina má být vidět, i když je lišta odsunutá
+  const active = nav.querySelector("button.active");
+  if (active) active.scrollIntoView({ block: "nearest", inline: "nearest" });
+  updateCatsEdges();
 }
+
+// Zeslabí okraj lišty skupin na straně, kde ještě něco je.
+function updateCatsEdges() {
+  const nav = $("cats");
+  const max = nav.scrollWidth - nav.clientWidth;
+  const pos = Math.abs(nav.scrollLeft);
+  const rtl = getComputedStyle(nav).direction === "rtl";
+  const moreStart = max > 2 && pos > 2;        // od začátku už je něco odsunuté
+  const moreEnd = max > 2 && pos < max - 2;    // za koncem ještě něco je
+  nav.classList.toggle(rtl ? "more-right" : "more-left", moreStart);
+  nav.classList.toggle(rtl ? "more-left" : "more-right", moreEnd);
+}
+$("cats").addEventListener("scroll", updateCatsEdges, { passive: true });
+window.addEventListener("resize", updateCatsEdges);
+
+// Kolečko myši posouvá lištu skupin do strany.
+$("cats").addEventListener("wheel", (e) => {
+  const nav = $("cats");
+  if (nav.scrollWidth <= nav.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+  e.preventDefault();
+  const flipped = getComputedStyle(nav).direction === "rtl";
+  nav.scrollLeft += flipped ? -e.deltaY : e.deltaY;
+}, { passive: false });
 
 function renderBoard() {
   const board = $("board");
@@ -462,6 +533,7 @@ function onTilePress(button, onTap, onHold) {
       timer = null;
       held = true;
       button.classList.remove("holding");
+      haptic();   // podržení je dokončené
       onHold();
     }, HOLD_MS);
   });
@@ -474,7 +546,12 @@ function onTilePress(button, onTap, onHold) {
   });
   button.addEventListener("contextmenu", (e) => {
     e.preventDefault();
+    // na dotykové obrazovce přijde contextmenu i při podržení prstu – text se nesmí vložit dvakrát
+    if (held) return;
+    const touchHold = timer !== null && e.pointerType !== "mouse";
     cancel();
+    held = touchHold;   // na telefonu by po podržení přišel ještě click
+    if (touchHold) haptic();
     onHold();
   });
 }
@@ -777,9 +854,12 @@ function fillSettingsForm(s) {
   $("pronCs").value = s.pronunciationCs || "";
   $("pronEn").value = s.pronunciationEn || "";
   $("flipUi").checked = !!s.flipUi;
+  $("showLanguageSwitch").checked = s.showLanguageSwitch !== false;
+  $("langSettingsRow").hidden = $("showLanguageSwitch").checked;
   $("enterSpeaks").checked = s.enterSpeaks !== false;
   $("clearAfterSpeak").checked = s.clearAfterSpeak !== false;
   $("lockSettings").checked = !!s.lockSettings;
+  $("volumeKeySpeaks").checked = !!s.volumeKeySpeaks;
   $("uiLanguage").value = s.uiLanguage === "en" ? "en" : "cs";
 
   $("voiceHint").textContent = state.voices.length ? t("voiceHint") : t("voiceHintNone", state.voicesDir);
@@ -925,7 +1005,9 @@ function collectSettings() {
   s.enterSpeaks = $("enterSpeaks").checked;
   s.clearAfterSpeak = $("clearAfterSpeak").checked;
   s.lockSettings = $("lockSettings").checked;
+  s.volumeKeySpeaks = $("volumeKeySpeaks").checked;
   s.flipUi = $("flipUi").checked;
+  s.showLanguageSwitch = $("showLanguageSwitch").checked;
   s.uiLanguage = $("uiLanguage").value;
   return s;
 }
@@ -1131,4 +1213,12 @@ function toast(text) {
   toastTimer = setTimeout(() => t.classList.remove("show"), 3500);
 }
 
-send({ type: "ready" });
+// Ve Windows je spojka hned. V aplikaci pro Android se nejdřív načte skript HybridWebView.
+if (webview2) {
+  send({ type: "ready" });
+} else {
+  const hybrid = document.createElement("script");
+  hybrid.src = "_framework/hybridwebview.js";
+  hybrid.onload = () => send({ type: "ready" });
+  document.head.appendChild(hybrid);
+}

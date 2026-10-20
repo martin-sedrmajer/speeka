@@ -17,7 +17,7 @@
     <span class="name">VOX</span>
   </div>
   <div id="voiceStatus" class="voice-status" role="status" aria-live="polite" data-t="statusLoading">Připravuji hlas…</div>
-  <div class="lang" role="group" aria-label="Jazyk řeči" data-t-aria="speechLang">
+  <div class="lang" id="langTop" role="group" aria-label="Jazyk řeči" data-t-aria="speechLang">
     <button data-lang="cs" title="Mluvit česky" data-t-title="speakCs">CZ</button>
     <button data-lang="en" title="Mluvit anglicky" data-t-title="speakEn">EN</button>
   </div>
@@ -177,9 +177,18 @@
         </select>
       </label>
       <label class="check"><input id="flipUi" type="checkbox"> <span data-t="flipUi">Flip UI: tlačítko Říct vpravo, fráze zarovnané doprava</span></label>
+      <label class="check"><input id="showLanguageSwitch" type="checkbox"> <span data-t="showLanguageSwitch">Zobrazit přepínač CZ / EN v horní liště</span></label>
+      <div class="lang-row" id="langSettingsRow" hidden>
+        <span data-t="speechLangHere">Jazyk řeči a frází</span>
+        <div class="lang" role="group" aria-label="Jazyk řeči" data-t-aria="speechLang">
+          <button data-lang="cs" title="Mluvit česky" data-t-title="speakCs">CZ</button>
+          <button data-lang="en" title="Mluvit anglicky" data-t-title="speakEn">EN</button>
+        </div>
+      </div>
       <label class="check"><input id="enterSpeaks" type="checkbox"> <span data-t="enterSpeaks">Enter řekne text (nový řádek: Shift+Enter)</span></label>
       <label class="check"><input id="clearAfterSpeak" type="checkbox"> <span data-t="clearAfterSpeak">Po vyslovení pole vymazat</span></label>
       <label class="check"><input id="lockSettings" type="checkbox"> <span data-t="lockSettings">Zamknout nastavení a úpravy frází příkladem (pro pečovatele)</span></label>
+      <label class="check" hidden><input id="volumeKeySpeaks" type="checkbox"> <span data-t="volumeKeySpeaks">Tlačítko pro snížení hlasitosti řekne text</span></label>
     </div>
 
     <div class="block">

@@ -30,9 +30,13 @@ public sealed class AppSettings
     public bool EnterSpeaks { get; set; } = true;
     /// <summary>Obrácené rozložení: tlačítko Říct vpravo, fráze zarovnané doprava.</summary>
     public bool FlipUi { get; set; }
+    /// <summary>Přepínač CZ / EN v horní liště; kdo mluví jen jedním jazykem, ho může schovat.</summary>
+    public bool ShowLanguageSwitch { get; set; } = true;
     public bool ClearAfterSpeak { get; set; } = true;
     /// <summary>Nastavení a úpravy frází jsou zamčené za jednoduchým příkladem (pro pečovatele).</summary>
     public bool LockSettings { get; set; }
+    /// <summary>Android: tlačítko pro snížení hlasitosti řekne text z pole (místo ubrání hlasitosti).</summary>
+    public bool VolumeKeySpeaks { get; set; }
 
     public List<PhraseCategory> Categories { get; set; } = Phrases.Defaults();
     public List<string> History { get; set; } = new();

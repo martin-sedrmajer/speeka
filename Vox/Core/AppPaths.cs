@@ -44,8 +44,13 @@ public static class AppPaths
         }
     }
 
-    /// <summary>Hlas přibalený k aplikaci (složka voices vedle Vox.exe).</summary>
-    public static string BundledVoicesDir => Path.Combine(AppDir, "voices");
+    /// <summary>
+    /// Hlas přibalený k aplikaci: ve Windows složka voices vedle Vox.exe. Android model po prvním
+    /// spuštění rozbalí do vlastní složky a nastaví ji sem.
+    /// </summary>
+    public static string? BundledVoicesOverride { get; set; }
+
+    public static string BundledVoicesDir => BundledVoicesOverride ?? Path.Combine(AppDir, "voices");
 
     /// <summary>Složky, ve kterých se hledají hlasy: přibalené a vlastní.</summary>
     public static IEnumerable<string> VoiceRoots =>
