@@ -22,6 +22,7 @@ public sealed class Bridge : IDisposable
     public Bridge(Action<string> post)
     {
         _post = post;
+        if (_settings.Current.UiLanguage != "") Loc.Ui = _settings.Current.UiLanguage;
     }
 
     public async void Handle(string json)
@@ -32,6 +33,7 @@ public sealed class Bridge : IDisposable
             switch (Str(msg?["type"]))
             {
                 case "ready":
+                    EnsureUiLanguage();
                     EnsureVoiceChosen();
                     PostInit();
                     _ = WarmUpAsync(_settings.Current);
@@ -82,13 +84,15 @@ public sealed class Bridge : IDisposable
                     var incoming = msg?["settings"]?.Deserialize<AppSettings>(SettingsStore.Json);
                     if (incoming != null)
                     {
-                        var voiceChanged = VoiceKey(incoming) != VoiceKey(_settings.Current);
+                        var voiceChanged = VoiceKey(incoming) != VoiceKey(_settings.Current)
+                                           || incoming.UiLanguage != _settings.Current.UiLanguage;   // stav hlasu je v jazyce rozhraní
                         incoming.History = _settings.Current.History;   // historii spravuje jen C#
                         incoming.VoiceChosen = true;
                         incoming.VoiceCsChosen = true;
                         _settings.Save(incoming);
+                        if (_settings.Current.UiLanguage != "") Loc.Ui = _settings.Current.UiLanguage;
                         Post(new { type = "settings", settings = _settings.Current });
-                        Post(new { type = "toast", text = "Nastavení uloženo." });
+                        Post(new { type = "toast", text = Loc.T("Nastavení uloženo.", "Settings saved.") });
                         if (voiceChanged) _ = WarmUpAsync(_settings.Current);
                     }
                     break;
@@ -109,7 +113,7 @@ public sealed class Bridge : IDisposable
                     cur.Categories = Phrases.Defaults();
                     _settings.Save(cur);
                     Post(new { type = "settings", settings = _settings.Current });
-                    Post(new { type = "toast", text = "Fráze vráceny na výchozí." });
+                    Post(new { type = "toast", text = Loc.T("Fráze vráceny na výchozí.", "Default phrases restored.") });
                     break;
 
                 case "history.clear":
@@ -250,7 +254,7 @@ public sealed class Bridge : IDisposable
     private async Task WarmUpAsync(AppSettings s)
     {
         var version = Interlocked.Increment(ref _warmupVersion);
-        Post(new { type = "voice.status", state = "loading", text = "Připravuji hlas…" });
+        Post(new { type = "voice.status", state = "loading", text = Loc.T("Připravuji hlas…", "Preparing the voice…") });
         try
         {
             await Task.Run(() => Synthesize(s.Language == "cs" ? "Hotovo." : "Ready.", s, s.Language));
@@ -274,27 +278,41 @@ public sealed class Bridge : IDisposable
     private static string VoiceLabel(AppSettings s)
     {
         var v = s.VoiceFor(s.Language);
-        var prefix = s.Language == "cs" ? "Česky – " : "Anglicky – ";
-        if (v.Engine == "windows") return prefix + (string.IsNullOrWhiteSpace(v.WindowsVoice) ? "hlas Windows (výchozí)" : v.WindowsVoice);
+        var prefix = s.Language == "cs" ? Loc.T("Česky – ", "Czech – ") : Loc.T("Anglicky – ", "English – ");
+        if (v.Engine == "windows")
+            return prefix + (string.IsNullOrWhiteSpace(v.WindowsVoice) ? Loc.T("hlas Windows (výchozí)", "Windows voice (default)") : v.WindowsVoice);
         var dir = PiperTts.ResolveDir(v.PiperModelDir);
-        if (dir == null) return prefix + "hlas nenalezen";
+        if (dir == null) return prefix + Loc.T("hlas nenalezen", "voice not found");
         var name = Path.GetFileName(dir);
         if (PiperTts.IsSupertonic(dir))
-        {
-            var speakers = PiperTts.SupertonicSpeakers;
-            var label = v.PiperSpeaker >= 0 && v.PiperSpeaker < speakers.Length ? speakers[v.PiperSpeaker] : speakers[0];
-            return $"{prefix}{name} · {label}";
-        }
+            return $"{prefix}{name} · {PiperTts.SupertonicSpeakerLabel(v.PiperSpeaker)}";
         if (PiperTts.IsKokoro(dir))
         {
             var speaker = KokoroVoices.Name(dir, v.PiperSpeaker);
             var label = speaker == null ? null : KokoroVoices.Label(speaker);
-            return $"{prefix}{name} · {label ?? "mluvčí " + v.PiperSpeaker}";
+            return $"{prefix}{name} · {label ?? Loc.T("mluvčí ", "speaker ") + v.PiperSpeaker}";
         }
         return prefix + name;
     }
 
     // ---------- první spuštění a seznamy ----------
+
+    /// <summary>
+    /// Jazyk rozhraní se při prvním spuštění vybere podle Windows. Na úplně nové instalaci
+    /// se podle něj nastaví i jazyk řeči.
+    /// </summary>
+    private void EnsureUiLanguage()
+    {
+        var s = _settings.Current;
+        if (s.UiLanguage == "")
+        {
+            var firstRun = !s.VoiceChosen && !s.VoiceCsChosen;
+            s.UiLanguage = Loc.Detect();
+            if (firstRun) s.Language = s.UiLanguage;
+            _settings.Save(s);
+        }
+        Loc.Ui = s.UiLanguage;
+    }
 
     /// <summary>
     /// Při prvním spuštění vybere nejlepší dostupný hlas. Supertonic (přibalený) mluví oběma jazyky
@@ -391,7 +409,8 @@ public sealed class Bridge : IDisposable
         }).ToList();
 
     private static object SupertonicSpeakers() =>
-        PiperTts.SupertonicSpeakers.Select((label, i) => new { id = i, label }).ToList();
+        Enumerable.Range(0, PiperTts.SupertonicSpeakerCount)
+            .Select(i => new { id = i, label = PiperTts.SupertonicSpeakerLabel(i) }).ToList();
 
     /// <summary>Anglicky mluvící hlasy modelu Kokoro pro výběr podle jména (u Piperu null).</summary>
     private static object? KokoroSpeakers(string dir)

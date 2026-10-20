@@ -27,6 +27,7 @@ Vox\
   Core\
     AppPaths        kde leží data
     Settings        nastavení, fráze, historie (JSON)
+    Loc             jazyk aplikace pro texty z C#
     Phrases         výchozí fráze pro první spuštění
   Voice\
     PiperTts        Piper, Kokoro a Supertonic přes
@@ -99,8 +100,17 @@ nemají.
 
 JAZYK
 -----
-Přepínač CZ / EN v horní liště mění jazyk tlačítek
-s frázemi, názvů skupin i hlas, kterým se mluví.
+Dva nezávislé jazyky:
+- Jazyk řeči: přepínač CZ / EN v horní liště mění
+  fráze na tlačítkách, názvy skupin a hlas.
+- Jazyk aplikace (Nastavení → Ovládání a vzhled):
+  čeština nebo angličtina pro veškeré ovládání,
+  hlášky, stav hlasu a názvy mluvčích. Při prvním
+  spuštění se vybere podle jazyka Windows (čeština
+  i pro slovenštinu, jinak angličtina); na nové
+  instalaci podle něj i jazyk řeči. Texty v C# jsou
+  v Core\Loc.cs (Loc.T), v rozhraní v app.js (MSG,
+  UI_EN) a v index.html (atributy data-t).
 Každý jazyk má vlastní hlas (Voice a VoiceCs
 v nastavení). Kokoro česky neumí; pro češtinu
 Supertonic, Piper cs_CZ (jirka) nebo hlas Windows

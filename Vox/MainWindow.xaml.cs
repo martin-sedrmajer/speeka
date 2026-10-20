@@ -72,7 +72,9 @@ public partial class MainWindow : Window
         }
         catch (WebView2RuntimeNotFoundException)
         {
-            MessageBox.Show("Chybí Microsoft Edge WebView2 Runtime. Na Windows 10/11 bývá nainstalovaný; jinak je ke stažení na webu Microsoftu.",
+            MessageBox.Show(Core.Loc.T(
+                    "Chybí Microsoft Edge WebView2 Runtime. Na Windows 10/11 bývá nainstalovaný; jinak je ke stažení na webu Microsoftu.",
+                    "Microsoft Edge WebView2 Runtime is missing. It is usually installed on Windows 10/11; otherwise download it from Microsoft."),
                 "Vox", MessageBoxButton.OK, MessageBoxImage.Error);
             Close();
         }

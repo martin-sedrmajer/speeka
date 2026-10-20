@@ -6,6 +6,8 @@ public sealed class AppSettings
 {
     /// <summary>Jazyk řeči: en | cs. Každý jazyk má vlastní hlas.</summary>
     public string Language { get; set; } = "en";
+    /// <summary>Jazyk rozhraní: cs | en. Prázdné = při spuštění se vybere podle jazyka Windows.</summary>
+    public string UiLanguage { get; set; } = "";
     /// <summary>Hlas pro angličtinu.</summary>
     public VoiceSettings Voice { get; set; } = new();
     /// <summary>Hlas pro češtinu (Kokoro česky neumí – Piper cs_CZ nebo hlas Windows).</summary>
@@ -165,6 +167,7 @@ public sealed class SettingsStore
             if (v.Engine is not ("local" or "windows")) v.Engine = "local";
         }
         if (s.Language is not ("en" or "cs")) s.Language = "en";
+        s.UiLanguage = Loc.Normalize(s.UiLanguage);
         if (s.Effect is not ("none" or "robot" or "radio")) s.Effect = "none";
         if (s.FontSize is not ("m" or "l" or "xl")) s.FontSize = "l";
         if (s.Theme is not ("dark" or "light")) s.Theme = "dark";

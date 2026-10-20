@@ -24,7 +24,9 @@ public sealed class PiperTts : IDisposable
         {
             var dir = ResolveDir(v.PiperModelDir)
                       ?? throw new InvalidOperationException(
-                          "Nenašel jsem žádný hlas. Rozbal hlas Kokoro, Supertonic nebo Piper do vlastní podsložky v " + AppPaths.VoicesDir + ".");
+                          Loc.T("Nenašel jsem žádný hlas. Rozbal hlas Supertonic, Kokoro nebo Piper do vlastní podsložky v ",
+                                "No voice found. Extract a Supertonic, Kokoro or Piper voice into its own subfolder of ")
+                          + AppPaths.VoicesDir + ".");
 
             var speaker = Math.Max(0, v.PiperSpeaker);
             // Kokoro: britští mluvčí (bf_, bm_) potřebují britský slovník výslovnosti.
@@ -48,10 +50,10 @@ public sealed class PiperTts : IDisposable
 
             var speed = (float)Math.Clamp(v.PiperSpeed, 0.5, 2.0);
             var audio = supertonic
-                ? GenerateSupertonic(tts, text, speed, Math.Min(speaker, SupertonicSpeakers.Length - 1), lang)
+                ? GenerateSupertonic(tts, text, speed, Math.Min(speaker, SupertonicSpeakerCount - 1), lang)
                 : tts.Generate(text, speed, speaker);
             if (audio.Samples == null || audio.Samples.Length == 0)
-                throw new InvalidOperationException("Hlas nevytvořil žádný zvuk.");
+                throw new InvalidOperationException(Loc.T("Hlas nevytvořil žádný zvuk.", "The voice produced no sound."));
             return Wav.FromFloat(audio.Samples, audio.SampleRate);
         }
     }
@@ -92,7 +94,7 @@ public sealed class PiperTts : IDisposable
             try
             {
                 foreach (var d in Directory.GetDirectories(root).Where(HasModel).OrderBy(d => d, StringComparer.OrdinalIgnoreCase))
-                    list.Add((Path.GetFileName(d) + (bundled ? " (přibalený)" : ""), d));
+                    list.Add((Path.GetFileName(d) + (bundled ? Loc.T(" (přibalený)", " (bundled)") : ""), d));
             }
             catch { /* složka nejde přečíst */ }
         }
@@ -125,14 +127,17 @@ public sealed class PiperTts : IDisposable
     public static bool IsSupertonic(string dir) =>
         File.Exists(Path.Combine(dir, "tts.json")) && File.Exists(Path.Combine(dir, "unicode_indexer.bin"));
 
-    /// <summary>
-    /// Mluvčí modelu Supertonic 3 (pořadí = číslo mluvčího): F1–F5 ženské, M1–M5 mužské.
-    /// </summary>
-    public static readonly string[] SupertonicSpeakers =
+    /// <summary>Mluvčí modelu Supertonic 3 (pořadí = číslo mluvčího): 0–4 ženské F1–F5, 5–9 mužské M1–M5.</summary>
+    public const int SupertonicSpeakerCount = 10;
+
+    /// <summary>Popisek mluvčího v jazyce rozhraní, např. „Muž 2 (M2)“ / „Man 2 (M2)“.</summary>
+    public static string SupertonicSpeakerLabel(int id)
     {
-        "Žena 1 (F1)", "Žena 2 (F2)", "Žena 3 (F3)", "Žena 4 (F4)", "Žena 5 (F5)",
-        "Muž 1 (M1)", "Muž 2 (M2)", "Muž 3 (M3)", "Muž 4 (M4)", "Muž 5 (M5)"
-    };
+        id = Math.Clamp(id, 0, SupertonicSpeakerCount - 1);
+        var female = id < 5;
+        var n = female ? id + 1 : id - 4;
+        return female ? Loc.T($"Žena {n} (F{n})", $"Woman {n} (F{n})") : Loc.T($"Muž {n} (M{n})", $"Man {n} (M{n})");
+    }
 
     /// <summary>Výchozí mluvčí Supertonicu: Muž 2 (M2).</summary>
     public const int SupertonicDefaultSpeaker = 6;
@@ -167,7 +172,8 @@ public sealed class PiperTts : IDisposable
             var file = Directory.GetFiles(dir, name + "*.onnx")
                 .OrderBy(f => f.Contains("int8", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
                 .FirstOrDefault();
-            return file ?? throw new InvalidOperationException($"Ve složce hlasu Supertonic chybí {name}*.onnx.");
+            return file ?? throw new InvalidOperationException(
+                Loc.T($"Ve složce hlasu Supertonic chybí {name}*.onnx.", $"The Supertonic voice folder is missing {name}*.onnx."));
         }
 
         var config = new OfflineTtsConfig();
@@ -179,7 +185,7 @@ public sealed class PiperTts : IDisposable
         config.Model.Supertonic.UnicodeIndexer = Path.Combine(dir, "unicode_indexer.bin");
         config.Model.Supertonic.VoiceStyle = Path.Combine(dir, "voice.bin");
         if (!File.Exists(config.Model.Supertonic.VoiceStyle))
-            throw new InvalidOperationException("Ve složce hlasu Supertonic chybí voice.bin.");
+            throw new InvalidOperationException(Loc.T("Ve složce hlasu Supertonic chybí voice.bin.", "The Supertonic voice folder is missing voice.bin."));
         config.Model.NumThreads = Math.Clamp(Environment.ProcessorCount / 2, 1, 4);
         config.Model.Provider = "cpu";
         return new OfflineTts(config);
@@ -194,7 +200,8 @@ public sealed class PiperTts : IDisposable
         if (!File.Exists(model)) model = Directory.GetFiles(dir, "*.onnx").First();
         var tokens = Path.Combine(dir, "tokens.txt");
         if (!File.Exists(tokens))
-            throw new InvalidOperationException("Ve složce hlasu Kokoro chybí tokens.txt. Stáhni hlas ve formátu pro sherpa-onnx.");
+            throw new InvalidOperationException(Loc.T("Ve složce hlasu Kokoro chybí tokens.txt. Stáhni hlas ve formátu pro sherpa-onnx.",
+                "The Kokoro voice folder is missing tokens.txt. Download the voice in the sherpa-onnx format."));
 
         var config = new OfflineTtsConfig();
         config.Model.Kokoro.Model = model;
@@ -220,7 +227,8 @@ public sealed class PiperTts : IDisposable
         var model = Directory.GetFiles(dir, "*.onnx").First();
         var tokens = Path.Combine(dir, "tokens.txt");
         if (!File.Exists(tokens))
-            throw new InvalidOperationException("Ve složce hlasu chybí tokens.txt. Hlas musí být ve formátu pro sherpa-onnx.");
+            throw new InvalidOperationException(Loc.T("Ve složce hlasu chybí tokens.txt. Hlas musí být ve formátu pro sherpa-onnx.",
+                "The voice folder is missing tokens.txt. The voice must be in the sherpa-onnx format."));
 
         var config = new OfflineTtsConfig();
         config.Model.Vits.Model = model;

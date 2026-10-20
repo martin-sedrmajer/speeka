@@ -18,6 +18,8 @@ surgery, or temporarily after an operation.
   [Supertonic 3](https://huggingface.co/Supertone/supertonic-3) running locally through
   [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx). The same voice speaks both languages.
 - **One-tap CZ / EN switch.** It changes the phrase buttons, category names and the voice.
+- **App in Czech or English.** The interface language is a separate setting (chosen from the
+  Windows language on first start), so switching the speech language never changes the controls.
 - **Phrase board.** Ready-made phrases in categories (basics, needs, health, conversation,
   time), with your own phrases and categories. Urgent phrases get large red buttons.
 - **History** of what you said. Tapping an item repeats it. The order doesn't jump around,

@@ -1,3 +1,5 @@
+using Vox.Core;
+
 namespace Vox.Voice;
 
 /// <summary>
@@ -60,13 +62,19 @@ public static class KokoroVoices
         return names != null && id >= 0 && id < names.Length ? names[id] : null;
     }
 
-    /// <summary>Popisek pro výběr: "Heart (americká žena)". Neanglické hlasy vrací null.</summary>
+    /// <summary>Popisek pro výběr: "Heart (americká žena)" / "Heart (American woman)". Neanglické hlasy vrací null.</summary>
     public static string? Label(string name)
     {
-        if (name.Length < 3 || name[2] != '_') return name == "af" ? "Default (americká žena)" : null;
-        var accent = name[0] switch { 'a' => "americk", 'b' => "britsk", _ => null };
-        if (accent == null) return null;
-        var who = name[1] == 'f' ? accent + "á žena" : accent + "ý muž";
+        if (name.Length < 3 || name[2] != '_')
+            return name == "af" ? Loc.T("Default (americká žena)", "Default (American woman)") : null;
+        var female = name[1] == 'f';
+        var who = name[0] switch
+        {
+            'a' => female ? Loc.T("americká žena", "American woman") : Loc.T("americký muž", "American man"),
+            'b' => female ? Loc.T("britská žena", "British woman") : Loc.T("britský muž", "British man"),
+            _ => null
+        };
+        if (who == null) return null;
         var title = char.ToUpperInvariant(name[3]) + name.Substring(4);
         return $"{title} ({who})";
     }

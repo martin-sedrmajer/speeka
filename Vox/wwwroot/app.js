@@ -19,6 +19,173 @@ function lang() {
   return state.settings && state.settings.language === "cs" ? "cs" : "en";
 }
 
+// ---------------------------------------------------------------- jazyk aplikace
+
+// Jazyk ovládání (Nastavení → Jazyk aplikace). Nezávisí na přepínači CZ / EN, ten mění jen řeč a fráze.
+function uiLang() {
+  return state.settings && state.settings.uiLanguage === "en" ? "en" : "cs";
+}
+
+// Texty, které vyrábí skript. Klíč → [česky, anglicky]; {0} se nahradí parametrem.
+const MSG = {
+  placeholderCs: ["Napiš, co chceš říct (česky)…   Enter = říct", "Type what you want to say (in Czech)…   Enter = speak"],
+  placeholderEn: ["Napiš, co chceš říct (anglicky)…   Enter = říct", "Type what you want to say (in English)…   Enter = speak"],
+  untitled: ["(bez názvu)", "(untitled)"],
+  nothingToRepeat: ["Zatím nebylo co zopakovat.", "Nothing to repeat yet."],
+  history: ["🕘 Historie", "🕘 History"],
+  addGroup: ["+ Skupina", "+ Group"],
+  historyTitle: ["Naposledy řečené – klepnutím zopakuješ", "Recently said – tap to say it again"],
+  historyEmpty: ["Zatím tu nic není. Co řekneš, objeví se tady.", "Nothing here yet. What you say will appear here."],
+  editTitle: ["Úprava: klepni na frázi, nebo na název skupiny nahoře pro přejmenování", "Editing: tap a phrase, or tap the group name above to rename it"],
+  missingCs: ["(česky chybí)", "(Czech missing)"],
+  missingEn: ["(anglicky chybí)", "(English missing)"],
+  addPhrase: ["+ Přidat frázi", "+ Add phrase"],
+  groupEmpty: ["Skupina je prázdná. Fráze přidáš přes „Upravit fráze“.", "This group is empty. Add phrases with “Edit phrases”."],
+  inserted: ["Vloženo do pole – uprav a řekni.", "Added to the text box – edit it and speak."],
+  done: ["✓ Hotovo", "✓ Done"],
+  editPhrases: ["✎ Upravit fráze", "✎ Edit phrases"],
+  editPhrase: ["Upravit frázi", "Edit phrase"],
+  newPhrase: ["Nová fráze", "New phrase"],
+  fillPhrase: ["Vyplň frázi aspoň v jednom jazyce.", "Fill in the phrase in at least one language."],
+  editGroup: ["Upravit skupinu", "Edit group"],
+  newGroup: ["Nová skupina", "New group"],
+  confirmDeleteGroup: ["Opravdu smazat i s frázemi?", "Really delete it with all its phrases?"],
+  fillGroup: ["Vyplň název skupiny.", "Fill in the group name."],
+  delete: ["Smazat", "Delete"],
+  editsLocked: ["Úpravy frází se zamkly.", "Phrase editing is locked again."],
+  voiceHint: ["Vlastní hlas (Supertonic, Kokoro, Piper) rozbal do vlastní podsložky ve složce s hlasy.", "To add a voice (Supertonic, Kokoro, Piper), extract it into its own subfolder of the voices folder."],
+  voiceHintNone: ["Nenašel jsem žádný přirozený hlas. Rozbal Supertonic, Kokoro nebo Piper do: {0}", "No natural voice found. Extract Supertonic, Kokoro or Piper into: {0}"],
+  multilingual: [", vícejazyčný", ", multilingual"],
+  noVoice: ["(žádný hlas nenalezen)", "(no voice found)"],
+  default: ["(výchozí)", "(default)"],
+  warnNotCzech: ["Tento hlas není český, česky bude mluvit s přízvukem (Kokoro česky nepřečte vůbec). Správnou výslovnost má Supertonic, Piper cs_CZ (jirka) nebo hlas Windows Microsoft Jakub.",
+                 "This is not a Czech voice. It will speak Czech with an accent (Kokoro can't read Czech at all). Supertonic, Piper cs_CZ (jirka) or the Windows voice Microsoft Jakub pronounce Czech correctly."],
+  warnLang: ["Tento hlas je {0}, anglicky bude mluvit s přízvukem nebo špatně.", "This voice is {0}. It will speak English with an accent or incorrectly."],
+  speakerNo: ["Mluvčí č. {0}", "Speaker no. {0}"],
+  resetConfirm: ["Opravdu? Tvoje úpravy zmizí", "Sure? Your changes will be lost"],
+  resetPhrases: ["Vrátit výchozí fráze", "Restore default phrases"],
+  historyCleared: ["Historie vymazána.", "History cleared."],
+  playFailed: ["Zvuk se nepodařilo přehrát: {0}", "Could not play the sound: {0}"],
+  voiceError: ["Hlas: {0}", "Voice: {0}"],
+  version: ["verze {0}", "version {0}"],
+};
+
+function t(key, arg) {
+  const pair = MSG[key];
+  const text = pair ? pair[uiLang() === "en" ? 1 : 0] : key;
+  return arg === undefined ? text : text.replace("{0}", arg);
+}
+
+// Anglické znění textů v HTML (atributy data-t, data-t-html, data-t-title, data-t-aria).
+// Česky zůstává to, co je přímo v HTML.
+const UI_EN = {
+  statusLoading: "Preparing the voice…",
+  speechLang: "Speech language",
+  speakCs: "Speak Czech",
+  speakEn: "Speak English",
+  stop: "■ Stop",
+  stopTitle: "Stop (Esc)",
+  settings: "Settings",
+  settingsBtn: "⚙ Settings",
+  textLabel: "Text to say",
+  speak: "▶ Speak",
+  repeat: "↻ Again",
+  repeatTitle: "Say the last sentence again",
+  clear: "✕ Clear",
+  clearTitle: "Clear the text box",
+  catsAria: "Phrase groups",
+  close: "Close",
+  voiceH: "Voice",
+  voiceForLang: "Voice for language",
+  voiceCs: "Czech voice",
+  voiceEn: "English voice",
+  voiceSegHint: "Each language has its own voice. The CZ / EN switch at the top changes the language of the phrases and the speech.",
+  engine: "Voice type",
+  engineLocal: "Natural (Supertonic / Kokoro / Piper, offline)",
+  engineWindows: "Windows voice (offline)",
+  voice: "Voice",
+  speaker: "Speaker",
+  windowsVoice: "Windows voice",
+  speed: "Speed",
+  pitch: "Pitch",
+  noise: "Intonation liveliness",
+  noiseW: "Rhythm variation",
+  piperFxHint: "Piper voices only. Higher = livelier speech; values that are too high can make the voice unsteady. Defaults 0.67 and 0.80.",
+  test: "▶ Try it",
+  voicesFolder: "Open the voices folder",
+  soundH: "Sound",
+  volume: "Volume",
+  leveler: "Even out the volume (nothing gets lost in noise)",
+  clarity: "Boost clarity (for listeners who are hard of hearing)",
+  effect: "Effect",
+  effectNone: "None",
+  effectRobot: "Robot (metallic voice)",
+  effectRadio: "Radio",
+  pronH: "Pronunciation",
+  pronHint: "If the voice says a word wrong, write it here the way it should sound. One word per line: <b>written = spoken</b>. Buttons and the text box keep the correct spelling.",
+  pronCs: "Czech",
+  pronEn: "English",
+  lookH: "Controls and appearance",
+  uiLanguage: "App language (Jazyk aplikace)",
+  fontSize: "Font size",
+  fontM: "Medium",
+  fontL: "Large",
+  fontXl: "Largest",
+  theme: "Theme",
+  themeDark: "Dark",
+  themeLight: "Light (high contrast)",
+  accent: "Colour",
+  blue: "Blue",
+  teal: "Teal",
+  amber: "Amber",
+  coral: "Coral",
+  purple: "Purple",
+  flipUi: "Flip UI: Speak button on the right, phrases aligned to the right",
+  enterSpeaks: "Enter speaks the text (new line: Shift+Enter)",
+  clearAfterSpeak: "Clear the text box after speaking",
+  lockSettings: "Lock settings and phrase editing behind a sum (for caregivers)",
+  phrasesH: "Phrases and history",
+  clearHistory: "Clear history",
+  offline: "Vox runs fully offline: no text or sound ever leaves your computer.",
+  aboutH: "About",
+  author: "Author: Martin Sedrmajer",
+  license: "Free software under the GPL-3.0 license:",
+  credits: "Voice: Supertonic 3 by Supertone Inc., OpenRAIL-M license. Speech synthesis: sherpa-onnx (Apache 2.0) and ONNX Runtime (MIT). Interface: Microsoft Edge WebView2. The full license texts are in the app folder (LICENSE.txt, THIRD-PARTY-NOTICES.txt).",
+  saveSettings: "Save settings",
+  inCzech: "Czech",
+  inEnglish: "English",
+  dlgHint: "The button shows and speaks the version in the language that is switched on. If one is missing, the other one is used.",
+  urgent: "Urgent (bright red button)",
+  nameCs: "Name in Czech",
+  nameEn: "Name in English",
+  cancel: "Cancel",
+  save: "Save",
+  lockTitle: "🔒 Settings are locked",
+  lockHint: "Changing the settings can change how the app speaks and how it is controlled. Solve the sum to unlock.",
+  lockAnswer: "Result",
+  lockError: "That's not right, try again.",
+  unlock: "Unlock",
+};
+
+// Přepne statické texty stránky do jazyka aplikace. Česká znění si pamatuje z HTML.
+function applyUi() {
+  const en = uiLang() === "en";
+  document.documentElement.lang = uiLang();
+  const swap = (attr, get, set) => document.querySelectorAll("[" + attr + "]").forEach((el) => {
+    const key = el.getAttribute(attr);
+    const store = "cs_" + attr;
+    if (el[store] === undefined) el[store] = get(el);
+    set(el, en && UI_EN[key] !== undefined ? UI_EN[key] : el[store]);
+  });
+  swap("data-t", (el) => el.textContent, (el, v) => { el.textContent = v; });
+  swap("data-t-html", (el) => el.innerHTML, (el, v) => { el.innerHTML = v; });
+  swap("data-t-title", (el) => el.title, (el, v) => { el.title = v; });
+  swap("data-t-aria", (el) => el.getAttribute("aria-label"), (el, v) => { el.setAttribute("aria-label", v); });
+  $("btnEdit").textContent = state.editing ? t("done") : t("editPhrases");
+  if (!resetArmed) $("btnResetPhrases").textContent = t("resetPhrases");
+  if (state.version) $("appVersion").textContent = t("version", state.version);
+}
+
 function send(msg) {
   if (window.chrome && window.chrome.webview) window.chrome.webview.postMessage(msg);
 }
@@ -34,7 +201,7 @@ function onMessage(msg) {
       state.voices = msg.voices || [];
       state.windowsVoices = msg.windowsVoices || [];
       state.voicesDir = msg.voicesDir || "";
-      $("appVersion").textContent = msg.version ? "verze " + msg.version : "";
+      state.version = msg.version || "";
       applyLook();
       renderAll();
       $("text").focus();
@@ -81,7 +248,7 @@ function onMessage(msg) {
 
     case "speak.error":
       if (msg.id === currentSpeech) currentSpeech = null;
-      toast("Hlas: " + msg.message);
+      toast(t("voiceError", msg.message));
       setSpeaking(!!playing);
       break;
 
@@ -102,12 +269,11 @@ function applyLook() {
   document.body.dataset.accent = s.accent || "blue";
   document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang()));
   $("text").lang = lang();
-  $("text").placeholder = lang() === "cs"
-    ? "Napiš, co chceš říct (česky)…   Enter = říct"
-    : "Napiš, co chceš říct (anglicky)…   Enter = říct";
+  $("text").placeholder = t(lang() === "cs" ? "placeholderCs" : "placeholderEn");
+  applyUi();
 }
 
-// Přepínač CZ / EN: mění jazyk tlačítek i hlas, kterým se mluví.
+// Přepínač CZ / EN: mění jazyk frází a hlas, kterým se mluví (ovládání ne – to je jazyk aplikace).
 document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => {
   if (!state.settings || b.dataset.lang === lang()) return;
   state.settings.language = b.dataset.lang;
@@ -117,7 +283,7 @@ document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("cli
 }));
 
 function catName(c) {
-  return (lang() === "en" ? c.nameEn || c.name : c.name || c.nameEn) || "(bez názvu)";
+  return (lang() === "en" ? c.nameEn || c.name : c.name || c.nameEn) || t("untitled");
 }
 
 // Znění fráze v zapnutém jazyce; když chybí, použije se druhé.
@@ -163,7 +329,7 @@ $("btnSpeak").addEventListener("click", speakComposer);
 $("btnClear").addEventListener("click", () => { $("text").value = ""; $("text").focus(); });
 $("btnRepeat").addEventListener("click", () => {
   const h = (state.settings && state.settings.history) || [];
-  if (h.length) speak(h[0], false); else toast("Zatím nebylo co zopakovat.");
+  if (h.length) speak(h[0], false); else toast(t("nothingToRepeat"));
 });
 $("btnStopTop").addEventListener("click", stopAll);
 
@@ -213,7 +379,7 @@ function renderCats() {
     nav.appendChild(b);
   }
   const hist = document.createElement("button");
-  hist.textContent = "🕘 Historie";
+  hist.textContent = t("history");
   hist.classList.toggle("active", state.activeCat === "history");
   hist.addEventListener("click", () => { state.activeCat = "history"; renderCats(); renderBoard(); });
   nav.appendChild(hist);
@@ -221,7 +387,7 @@ function renderCats() {
   if (state.editing) {
     const add = document.createElement("button");
     add.className = "add";
-    add.textContent = "+ Skupina";
+    add.textContent = t("addGroup");
     add.addEventListener("click", () => openCategoryDialog(null));
     nav.appendChild(add);
   }
@@ -232,10 +398,10 @@ function renderBoard() {
   board.innerHTML = "";
 
   if (state.activeCat === "history") {
-    $("boardTitle").textContent = "Naposledy řečené – klepnutím zopakuješ";
+    $("boardTitle").textContent = t("historyTitle");
     const items = state.settings.history || [];
     if (!items.length) {
-      board.appendChild(emptyNote("Zatím tu nic není. Co řekneš, objeví se tady."));
+      board.appendChild(emptyNote(t("historyEmpty")));
       return;
     }
     for (const t of items) {
@@ -252,12 +418,12 @@ function renderBoard() {
   const cat = categories().find((c) => c.id === state.activeCat);
   if (!cat) return;
   $("boardTitle").textContent = state.editing
-    ? "Úprava: klepni na frázi, nebo na název skupiny nahoře pro přejmenování"
+    ? t("editTitle")
     : catName(cat);
 
   cat.phrases.forEach((p, index) => {
     // při úpravě je vidět i druhý jazyk, ať je hned poznat, kde překlad chybí
-    const b = tile(phraseText(p), state.editing ? phraseOther(p) || (lang() === "en" ? "(česky chybí)" : "(anglicky chybí)") : null, p.urgent);
+    const b = tile(phraseText(p), state.editing ? phraseOther(p) || t(lang() === "en" ? "missingCs" : "missingEn") : null, p.urgent);
     onTilePress(b,
       () => { if (state.editing) openPhraseDialog(cat, index); else speak(phraseText(p)); },
       () => { if (!state.editing) insertIntoComposer(phraseText(p)); });
@@ -267,11 +433,11 @@ function renderBoard() {
   if (state.editing) {
     const add = document.createElement("button");
     add.className = "tile add";
-    add.textContent = "+ Přidat frázi";
+    add.textContent = t("addPhrase");
     add.addEventListener("click", () => openPhraseDialog(cat, -1));
     board.appendChild(add);
   } else if (!cat.phrases.length) {
-    board.appendChild(emptyNote("Skupina je prázdná. Fráze přidáš přes „Upravit fráze“."));
+    board.appendChild(emptyNote(t("groupEmpty")));
   }
 }
 
@@ -328,7 +494,7 @@ function insertIntoComposer(text) {
   const caret = (before + pre + text).length;
   box.focus();
   box.setSelectionRange(caret, caret);
-  toast("Vloženo do pole – uprav a řekni.");
+  toast(t("inserted"));
 }
 
 // Dlouhé zprávy v historii zkrátí na tři řádky a dají „…“. Dělá to skript, protože
@@ -387,7 +553,7 @@ function toggleEditing() {
   state.editing = !state.editing;
   if (!state.editing) relock();
   document.body.classList.toggle("editing", state.editing);
-  $("btnEdit").textContent = state.editing ? "✓ Hotovo" : "✎ Upravit fráze";
+  $("btnEdit").textContent = state.editing ? t("done") : t("editPhrases");
   if (state.editing && state.activeCat === "history") {
     const cats = categories();
     if (cats.length) state.activeCat = cats[0].id;
@@ -407,7 +573,7 @@ let dialogAction = null;
 
 function openPhraseDialog(cat, index) {
   const p = index >= 0 ? cat.phrases[index] : { label: "", text: "", urgent: false };
-  $("dlgTitle").textContent = index >= 0 ? "Upravit frázi" : "Nová fráze";
+  $("dlgTitle").textContent = index >= 0 ? t("editPhrase") : t("newPhrase");
   $("dlgPhrase").hidden = false;
   $("dlgCategory").hidden = true;
   $("dlgLabel").value = p.label || "";
@@ -421,7 +587,7 @@ function openPhraseDialog(cat, index) {
     } else {
       const label = $("dlgLabel").value.trim();
       const text = $("dlgText").value.trim();
-      if (!label && !text) { toast("Vyplň frázi aspoň v jednom jazyce."); return false; }
+      if (!label && !text) { toast(t("fillPhrase")); return false; }
       const item = { label, text, urgent: $("dlgUrgent").checked };
       if (index >= 0) cat.phrases[index] = item; else cat.phrases.push(item);
     }
@@ -433,7 +599,7 @@ function openPhraseDialog(cat, index) {
 }
 
 function openCategoryDialog(cat) {
-  $("dlgTitle").textContent = cat ? "Upravit skupinu" : "Nová skupina";
+  $("dlgTitle").textContent = cat ? t("editGroup") : t("newGroup");
   $("dlgPhrase").hidden = true;
   $("dlgCategory").hidden = false;
   $("dlgCatName").value = cat ? cat.name : "";
@@ -445,7 +611,7 @@ function openCategoryDialog(cat) {
     if (what === "delete") {
       if (cat.phrases.length && !confirmDelete) {
         confirmDelete = true;
-        $("dlgDelete").textContent = "Opravdu smazat i s frázemi?";
+        $("dlgDelete").textContent = t("confirmDeleteGroup");
         return false;
       }
       cats.splice(cats.indexOf(cat), 1);
@@ -453,7 +619,7 @@ function openCategoryDialog(cat) {
     } else {
       const name = $("dlgCatName").value.trim();
       const nameEn = $("dlgCatNameEn").value.trim();
-      if (!name && !nameEn) { toast("Vyplň název skupiny."); return false; }
+      if (!name && !nameEn) { toast(t("fillGroup")); return false; }
       if (cat) { cat.name = name; cat.nameEn = nameEn; }
       else {
         const created = { id: Math.random().toString(16).slice(2) + Date.now().toString(16), name, nameEn, phrases: [] };
@@ -472,7 +638,7 @@ let confirmDelete = false;
 
 function openDialog(focusEl) {
   confirmDelete = false;
-  $("dlgDelete").textContent = "Smazat";
+  $("dlgDelete").textContent = t("delete");
   $("dialog").hidden = false;
   setTimeout(() => focusEl.focus(), 0);
 }
@@ -556,7 +722,7 @@ setInterval(() => {
   if (state.editing && state.settings && state.settings.lockSettings &&
       Date.now() >= unlockedUntil && $("dialog").hidden) {
     toggleEditing();
-    toast("Úpravy frází se zamkly.");
+    toast(t("editsLocked"));
   }
 }, 15000);
 
@@ -614,10 +780,9 @@ function fillSettingsForm(s) {
   $("enterSpeaks").checked = s.enterSpeaks !== false;
   $("clearAfterSpeak").checked = s.clearAfterSpeak !== false;
   $("lockSettings").checked = !!s.lockSettings;
+  $("uiLanguage").value = s.uiLanguage === "en" ? "en" : "cs";
 
-  $("voiceHint").textContent = state.voices.length
-    ? "Vlastní hlas (Kokoro, Piper, Supertonic) rozbal do vlastní podsložky ve složce s hlasy."
-    : "Nenašel jsem žádný přirozený hlas. Rozbal Supertonic, Kokoro nebo Piper do: " + state.voicesDir;
+  $("voiceHint").textContent = state.voices.length ? t("voiceHint") : t("voiceHintNone", state.voicesDir);
   $("voiceHint").className = "hint" + (state.voices.length ? "" : " bad");
   updateValues();
 }
@@ -631,18 +796,18 @@ function loadVoiceFields(v) {
   vd.innerHTML = "";
   for (const voice of state.voices) {
     const kind = voice.supertonic ? "Supertonic" : voice.kokoro ? "Kokoro" : "Piper";
-    const tag = voice.supertonic ? ", vícejazyčný" : voice.lang ? ", " + voice.lang.toUpperCase() : "";
+    const tag = voice.supertonic ? t("multilingual") : voice.lang ? ", " + voice.lang.toUpperCase() : "";
     vd.add(new Option(voice.name + "  · " + kind + tag, voice.dir));
   }
   if (v.piperModelDir && !state.voices.some((x) => x.dir === v.piperModelDir)) vd.add(new Option(v.piperModelDir, v.piperModelDir));
-  if (!state.voices.length && !v.piperModelDir) vd.add(new Option("(žádný hlas nenalezen)", ""));
+  if (!state.voices.length && !v.piperModelDir) vd.add(new Option(t("noVoice"), ""));
   vd.value = v.piperModelDir || (state.voices[0] ? state.voices[0].dir : "");
   $("speakerNum").value = v.piperSpeaker || 0;
   syncSpeaker();
 
   const wv = $("windowsVoice");
   wv.innerHTML = "";
-  wv.add(new Option("(výchozí)", ""));
+  wv.add(new Option(t("default"), ""));
   for (const name of state.windowsVoices) wv.add(new Option(name, name));
   wv.value = state.windowsVoices.includes(v.windowsVoice) ? v.windowsVoice : "";
   $("windowsRate").value = v.windowsRate || 0;
@@ -681,9 +846,7 @@ function updateLangWarn() {
   if ($("engine").value === "local") {
     const voice = state.voices.find((x) => x.dir === $("voiceDir").value);
     if (voice && voice.lang && voice.lang !== state.formLang) {
-      text = state.formLang === "cs"
-        ? "Tento hlas není český, česky bude mluvit s přízvukem (Kokoro česky nepřečte vůbec). Správnou výslovnost má Supertonic, Piper cs_CZ (jirka) nebo hlas Windows Microsoft Jakub."
-        : "Tento hlas je " + voice.lang.toUpperCase() + ", anglicky bude mluvit s přízvukem nebo špatně.";
+      text = state.formLang === "cs" ? t("warnNotCzech") : t("warnLang", voice.lang.toUpperCase());
     }
   }
   el.textContent = text;
@@ -706,7 +869,7 @@ function syncSpeaker() {
   const id = Number(num.value) || 0;
   sel.innerHTML = "";
   for (const sp of list) sel.add(new Option(sp.label, String(sp.id)));
-  if (!list.some((sp) => sp.id === id)) sel.add(new Option("Mluvčí č. " + id, String(id)));
+  if (!list.some((sp) => sp.id === id)) sel.add(new Option(t("speakerNo", id), String(id)));
   sel.value = String(id);
   sel.hidden = false;
   num.hidden = true;
@@ -763,6 +926,7 @@ function collectSettings() {
   s.clearAfterSpeak = $("clearAfterSpeak").checked;
   s.lockSettings = $("lockSettings").checked;
   s.flipUi = $("flipUi").checked;
+  s.uiLanguage = $("uiLanguage").value;
   return s;
 }
 
@@ -781,17 +945,17 @@ let resetArmed = false;
 $("btnResetPhrases").addEventListener("click", () => {
   if (!resetArmed) {
     resetArmed = true;
-    $("btnResetPhrases").textContent = "Opravdu? Tvoje úpravy zmizí";
-    setTimeout(() => { resetArmed = false; $("btnResetPhrases").textContent = "Vrátit výchozí fráze"; }, 4000);
+    $("btnResetPhrases").textContent = t("resetConfirm");
+    setTimeout(() => { resetArmed = false; $("btnResetPhrases").textContent = t("resetPhrases"); }, 4000);
     return;
   }
   resetArmed = false;
-  $("btnResetPhrases").textContent = "Vrátit výchozí fráze";
+  $("btnResetPhrases").textContent = t("resetPhrases");
   send({ type: "phrases.reset" });
 });
 $("btnClearHistory").addEventListener("click", () => {
   send({ type: "history.clear" });
-  toast("Historie vymazána.");
+  toast(t("historyCleared"));
 });
 
 // ---------------------------------------------------------------- přehrávání
@@ -864,7 +1028,7 @@ async function playNext() {
     src.start(start);
   } catch (err) {
     if (gen !== generation) return;
-    toast("Zvuk se nepodařilo přehrát: " + err.message);
+    toast(t("playFailed", err.message));
     playing = null;
     playNext();
   }
