@@ -34,6 +34,7 @@ function onMessage(msg) {
       state.voices = msg.voices || [];
       state.windowsVoices = msg.windowsVoices || [];
       state.voicesDir = msg.voicesDir || "";
+      $("appVersion").textContent = msg.version ? "verze " + msg.version : "";
       applyLook();
       renderAll();
       $("text").focus();
@@ -384,6 +385,7 @@ $("btnEdit").addEventListener("click", () => {
 
 function toggleEditing() {
   state.editing = !state.editing;
+  if (!state.editing) relock();
   document.body.classList.toggle("editing", state.editing);
   $("btnEdit").textContent = state.editing ? "✓ Hotovo" : "✎ Upravit fráze";
   if (state.editing && state.activeCat === "history") {
@@ -493,6 +495,11 @@ $("dialog").addEventListener("click", (e) => { if (e.target === $("dialog")) clo
 // odemčeno pár minut, ať se při úpravách nemusí počítat pořád dokola.
 const UNLOCK_MINUTES = 5;
 let unlockedUntil = 0;
+
+// Zamkne hned: po zavření nastavení a po ukončení úprav frází.
+function relock() {
+  unlockedUntil = 0;
+}
 let lockAction = null;
 let lockResult = 0;
 let lockMisses = 0;
@@ -575,6 +582,8 @@ function openDrawer() {
 }
 
 function closeDrawer() {
+  // pečovatel odchází: zamknout hned, ne až po vypršení (úpravy frází zamknou samy po skončení)
+  if (!state.editing) relock();
   $("drawer").classList.remove("open");
   $("drawer").setAttribute("aria-hidden", "true");
   $("drawer").inert = true;

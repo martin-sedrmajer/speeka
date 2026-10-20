@@ -296,3 +296,7 @@ label.check { display: flex; align-items: center; color: var(--text); }
   .board { grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
   .grid2 { grid-template-columns: 1fr; }
 }
+
+/* ---------- O aplikaci ---------- */
+.about p { margin: .3rem 0 .6rem; line-height: 1.5; }
+.about a { color: var(--accent); }

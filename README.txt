@@ -15,6 +15,9 @@ LICENSE             GPL-3.0 (licence Voxu)
 LICENSE-EXCEPTION.txt  výjimka pro WebView2
 THIRD-PARTY-NOTICES.txt  licence převzatých částí
 README.md           popis pro GitHub (anglicky)
+docs\               webová stránka pro uživatele (GitHub
+                    Pages): index.html, screenshoty, ukázky
+                    hlasu Muž 2 česky a anglicky
 Vox\
   App.xaml(.cs)     start aplikace, zachycení chyb
   MainWindow        okno s WebView2 (stránka z wwwroot)
@@ -154,10 +157,12 @@ i světlý vzhled.
 Zámek pro pečovatele (volba v Nastavení): vstup do
 Nastavení a do úprav frází chce vyřešit příklad
 (a + b do 49 + 49, nebo a x b + c), pokaždé jiný,
-po dvou chybách nový. Po odemčení platí 5 minut,
-každá uložená úprava fráze je prodlouží. Po vypršení
-se úpravy frází samy ukončí. Zavřený panel Nastavení
-nejde projít klávesou Tab.
+po dvou chybách nový. Zamkne se hned po zavření
+Nastavení a po ukončení úprav frází (Hotovo). Během
+práce platí odemčení nejvýš 5 minut, každá uložená
+úprava fráze je prodlouží; po vypršení se úpravy
+frází samy ukončí. Zavřený panel Nastavení nejde
+projít klávesou Tab.
 Přepínač jazyka a mluvení zůstávají volné.
 Flip UI: zrcadlové rozložení – tlačítko Říct vpravo,
 skupiny a fráze řazené a zarovnané zprava.

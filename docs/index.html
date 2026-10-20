@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vox – mluví za vás</title>
+<meta name="description" content="Vox je bezplatná aplikace pro Windows, která mluví za lidi, kteří přišli o hlas. Napíšete nebo klepnete a Vox to řekne přirozeným hlasem, česky i anglicky, bez internetu.">
+<meta property="og:title" content="Vox – mluví za vás">
+<meta property="og:description" content="Bezplatná offline aplikace pro Windows: napíšete nebo klepnete a Vox to řekne přirozeným hlasem, česky i anglicky.">
+<meta property="og:image" content="img/vox-cs.webp">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%232f8cff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 7h20a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H14l-6 5v-5H6a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3z'/%3E%3Cpath d='M12 12.5v5M16 10.5v9M20 12.5v5'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0c1015;
+    --bg2: #121820;
+    --panel: #161e28;
+    --line: #232e3b;
+    --text: #e8edf3;
+    --dim: #a3b0bf;
+    --accent: #2f8cff;
+    --accent-dim: #1f64c4;
+    --on-accent: #ffffff;
+    --urgent: #ff6b6b;
+    --focus: #ffd166;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #ffffff;
+      --bg2: #f2f5f9;
+      --panel: #ffffff;
+      --line: #c8d0da;
+      --text: #0a0d12;
+      --dim: #3a4654;
+      --accent: #0866d6;
+      --accent-dim: #054ea6;
+      --urgent: #b00020;
+      --focus: #b35c00;
+      color-scheme: light;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { font-size: 18px; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height: 1.55;
+  }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(70rem, 100% - 2rem); margin-inline: auto; }
+  .skip { position: absolute; left: -999px; top: .5rem; background: var(--accent); color: var(--on-accent); padding: .5rem 1rem; border-radius: 8px; z-index: 10; }
+  .skip:focus { left: .5rem; }
+
+  /* ---------- hlavička ---------- */
+  header.top { border-bottom: 1px solid var(--line); background: var(--bg2); }
+  header.top .wrap { display: flex; align-items: center; gap: 1rem; min-height: 3.6rem; }
+  .brand { display: flex; align-items: center; gap: .5rem; text-decoration: none; color: var(--text); font-weight: 800; letter-spacing: .18em; }
+  .brand svg { width: 1.9rem; height: 1.9rem; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .brand span { color: var(--accent); }
+  .spacer { flex: 1; }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .lang button { font: inherit; font-weight: 700; font-size: .85rem; padding: .35rem .8rem; border: 0; background: transparent; color: var(--dim); cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+  .gh { color: var(--dim); text-decoration: none; font-size: .9rem; }
+  .gh:hover { color: var(--text); }
+
+  /* ---------- úvod ---------- */
+  .hero { padding: 3.5rem 0 2rem; }
+  .hero h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.1; margin: 0 0 1rem; letter-spacing: -.02em; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p.lead { font-size: 1.2rem; color: var(--dim); max-width: 40rem; margin: 0 0 1.8rem; }
+  .cta { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: .55rem;
+    font: inherit; font-weight: 700; font-size: 1.05rem;
+    padding: .85rem 1.5rem; border-radius: 14px; cursor: pointer;
+    text-decoration: none; border: 2px solid var(--line); background: var(--panel); color: var(--text);
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-size: 1.15rem; padding: 1rem 1.8rem; }
+  .btn.primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); }
+  .btn:hover { border-color: var(--accent); }
+  .btn svg { width: 1.2em; height: 1.2em; fill: currentColor; }
+  .meta { margin-top: .9rem; font-size: .9rem; color: var(--dim); }
+
+  .shot { margin: 2.5rem 0 0; }
+  .shot img { width: 100%; height: auto; display: block; border-radius: 16px; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, .35); }
+  .shot figcaption { font-size: .85rem; color: var(--dim); margin-top: .6rem; text-align: center; }
+
+  /* ---------- sekce ---------- */
+  section { padding: 3rem 0; }
+  section + section { border-top: 1px solid var(--line); }
+  h2 { font-size: 1.8rem; margin: 0 0 1rem; letter-spacing: -.01em; }
+  .prose { max-width: 44rem; color: var(--dim); font-size: 1.08rem; }
+  .prose strong { color: var(--text); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 1.3rem 1.4rem; }
+  .card h3 { margin: 0 0 .4rem; font-size: 1.1rem; }
+  .card p { margin: 0; color: var(--dim); font-size: .98rem; }
+  .card .ico { font-size: 1.6rem; line-height: 1; margin-bottom: .6rem; display: block; }
+
+  ol.steps { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 1rem; counter-reset: s; }
+  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 2.6rem 1fr; gap: 1rem; align-items: start; }
+  ol.steps li::before {
+    content: counter(s); width: 2.6rem; height: 2.6rem; border-radius: 50%;
+    background: var(--accent); color: var(--on-accent); font-weight: 800;
+    display: grid; place-items: center;
+  }
+  ol.steps h3 { margin: .35rem 0 .2rem; font-size: 1.1rem; }
+  ol.steps p { margin: 0; color: var(--dim); }
+  .note { margin-top: 1.5rem; padding: 1rem 1.2rem; border-left: 4px solid var(--focus); background: var(--panel); border-radius: 0 12px 12px 0; color: var(--dim); }
+  .note strong { color: var(--text); }
+
+  footer { border-top: 1px solid var(--line); background: var(--bg2); padding: 2rem 0 2.5rem; color: var(--dim); font-size: .9rem; }
+  footer p { margin: .3rem 0; }
+
+  @media (max-width: 40rem) {
+    html { font-size: 17px; }
+    .hero { padding-top: 2.2rem; }
+    .gh { display: none; }
+    .btn, .btn.primary { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Přeskočit na obsah</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Vox">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 7h20a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H14l-6 5v-5H6a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3z"/><path d="M12 12.5v5M16 10.5v9M20 12.5v5"/></svg>
+      <span>VOX</span>
+    </a>
+    <div class="spacer"></div>
+    <a class="gh" href="https://github.com/martin-sedrmajer/vox-aac">GitHub</a>
+    <div class="lang" role="group" aria-label="Jazyk / Language">
+      <button type="button" data-lang="cs" aria-pressed="true">CZ</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="hero">
+    <div class="wrap">
+      <h1 data-i18n-html="h1">Vox mluví <em>za vás</em>.</h1>
+      <p class="lead" data-i18n="lead">Napíšete, co chcete říct, nebo klepnete na připravenou frázi. Vox to řekne přirozeným hlasem, česky i anglicky. Bez internetu, bez účtu a zdarma.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/martin-sedrmajer/vox-aac/releases/latest">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4 3.6 3.6V3zM5 19h14v2H5z"/></svg>
+          <span data-i18n="download">Stáhnout pro Windows</span>
+        </a>
+        <button class="btn" type="button" id="listen" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" id="listenIcon"><path d="M8 5v14l11-7z"/></svg>
+          <span data-i18n="listen">Poslechnout hlas</span>
+        </button>
+        <audio id="sample" preload="none" src="audio/vox-cs.mp3"></audio>
+      </div>
+      <p class="meta" data-i18n="meta">Windows 10 a 11 (64bit) · zdarma · otevřený zdrojový kód · verze pro Android se plánuje</p>
+
+      <figure class="shot">
+        <img id="shot" src="img/vox-cs.webp" width="1600" height="976"
+             alt="Okno aplikace Vox: nahoře pole pro text a velké modré tlačítko Říct, pod ním skupiny frází a tlačítka s frázemi, naléhavé červeně." data-i18n-alt="shotAlt">
+        <figcaption data-i18n="shotCap">Naléhavé fráze jsou červené, aby byly vidět na první pohled.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i18n="whoH">Pro koho je Vox</h2>
+      <p class="prose" data-i18n-html="who">Pro lidi, kteří <strong>umějí číst a psát, ale nemohou mluvit</strong>: po mozkové mrtvici, s ALS, po operaci hrtanu nebo dočasně po zákroku. A pro jejich blízké, pečovatele a logopedy, kteří jim chtějí vrátit hlas do rozhovoru.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i18n="featH">Co umí</h2>
+      <div class="grid">
+        <div class="card"><span class="ico" aria-hidden="true">🗣️</span><h3 data-i18n="f1h">Přirozený hlas</h3><p data-i18n="f1">Neuronový hlas Supertonic, který zní jako člověk, ne jako robot. Česky i anglicky stejným hlasem.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🔘</span><h3 data-i18n="f2h">Připravené fráze</h3><p data-i18n="f2">Ano, ne, děkuji, mám žízeň, zavolejte sestru… Skupiny frází si upravíte podle sebe.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🌍</span><h3 data-i18n="f3h">Čeština i angličtina</h3><p data-i18n="f3">Jedním klepnutím se přepnou tlačítka, fráze i hlas. Hodí se v nemocnici v zahraničí.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🔊</span><h3 data-i18n="f4h">Slyšet i v hluku</h3><p data-i18n="f4">Hlasitost až 200 % s ochranou proti přebuzení, vyrovnání hlasitosti a zvýraznění pro nedoslýchavé.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🕘</span><h3 data-i18n="f5h">Historie</h3><p data-i18n="f5">Co jste řekli, zůstane po ruce. Jedním klepnutím to zopakujete.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🔒</span><h3 data-i18n="f6h">Zámek pro pečovatele</h3><p data-i18n="f6">Nastavení a úpravy frází lze zamknout jednoduchým příkladem, aby se nic nezměnilo omylem.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🔍</span><h3 data-i18n="f7h">Velké a čitelné</h3><p data-i18n="f7">Tři velikosti písma, tmavý i světlý vzhled s vysokým kontrastem, velká tlačítka.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🛡️</span><h3 data-i18n="f8h">Nic neodchází z počítače</h3><p data-i18n="f8">Vox běží celý offline. Žádný účet, žádný cloud, žádné sledování. Co napíšete, zůstane jen u vás.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i18n="startH">Jak začít</h2>
+      <ol class="steps">
+        <li><div><h3 data-i18n="s1h">Stáhněte Vox</h3><p data-i18n="s1">Tlačítkem nahoře stáhnete soubor ZIP. Je větší, protože obsahuje i hlas.</p></div></li>
+        <li><div><h3 data-i18n="s2h">Rozbalte ho</h3><p data-i18n="s2">Pravým tlačítkem na soubor → Extrahovat vše. Složku můžete dát kamkoli, třeba do Dokumentů.</p></div></li>
+        <li><div><h3 data-i18n="s3h">Spusťte Vox.exe</h3><p data-i18n="s3">Nic se neinstaluje. Napište první větu a zmáčkněte Enter.</p></div></li>
+      </ol>
+      <p class="note" data-i18n-html="smart"><strong>Při prvním spuštění</strong> může Windows ukázat hlášku „Systém Windows ochránil váš počítač“. Vox zatím nemá placený digitální podpis. Klikněte na <strong>Další informace</strong> a pak na <strong>Přesto spustit</strong>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n-html="foot1">Vox je otevřený software pod licencí GPL-3.0. Vytvořil <a href="https://github.com/martin-sedrmajer">Martin Sedrmajer</a>.</p>
+    <p data-i18n-html="foot2">Zdrojový kód a hlášení chyb: <a href="https://github.com/martin-sedrmajer/vox-aac">github.com/martin-sedrmajer/vox-aac</a></p>
+    <p data-i18n="foot3">Hlas: Supertonic 3 od Supertone Inc. (licence OpenRAIL-M), převedený projektem sherpa-onnx.</p>
+  </div>
+</footer>
+
+<script>
+  // Texty v obou jazycích. Čeština je přímo v HTML (funguje i bez skriptu), angličtina se doplní.
+  const T = {
+    en: {
+      title: "Vox – speaks for you",
+      skip: "Skip to content",
+      h1: "Vox speaks <em>for you</em>.",
+      lead: "Type what you want to say or tap a ready-made phrase. Vox says it out loud in a natural voice, in Czech or English. No internet, no account, free.",
+      download: "Download for Windows",
+      listen: "Listen to the voice",
+      meta: "Windows 10 and 11 (64-bit) · free · open source · Android version planned",
+      shotAlt: "The Vox window: a text box with a large blue Speak button at the top, phrase groups and phrase buttons below.",
+      shotCap: "One tap on a phrase and Vox says it.",
+      whoH: "Who Vox is for",
+      who: "For people who <strong>can read and write but can't speak</strong>: after a stroke, with ALS/MND, after laryngeal surgery, or for a while after an operation. And for the family, caregivers and speech therapists who want to give them their voice back in a conversation.",
+      featH: "What it does",
+      f1h: "A natural voice", f1: "The Supertonic neural voice sounds like a person, not a robot. Czech and English in the same voice.",
+      f2h: "Ready-made phrases", f2: "Yes, no, thank you, I'm thirsty, please call the nurse… Edit the phrase groups to suit you.",
+      f3h: "Czech and English", f3: "One tap switches the buttons, phrases and voice. Handy in a hospital abroad.",
+      f4h: "Heard in a noisy room", f4: "Volume up to 200 % with a limiter, level matching and a clarity boost for listeners who are hard of hearing.",
+      f5h: "History", f5: "What you said stays at hand. Tap it to say it again.",
+      f6h: "Caregiver lock", f6: "Settings and phrase editing can be locked behind a simple sum, so nothing changes by accident.",
+      f7h: "Large and readable", f7: "Three font sizes, dark and high-contrast light themes, big buttons.",
+      f8h: "Nothing leaves your computer", f8: "Vox runs fully offline. No account, no cloud, no tracking. What you type stays with you.",
+      startH: "Getting started",
+      s1h: "Download Vox", s1: "The button at the top downloads a ZIP file. It is fairly large because the voice is included.",
+      s2h: "Extract it", s2: "Right-click the file → Extract All. Put the folder anywhere, for example in Documents.",
+      s3h: "Run Vox.exe", s3: "Nothing to install. Type your first sentence and press Enter.",
+      smart: "<strong>On first launch</strong> Windows may show “Windows protected your PC”. Vox doesn't have a paid code-signing certificate yet. Click <strong>More info</strong> and then <strong>Run anyway</strong>.",
+      foot1: "Vox is free software under the GPL-3.0 license. Made by <a href=\"https://github.com/martin-sedrmajer\">Martin Sedrmajer</a>.",
+      foot2: "Source code and bug reports: <a href=\"https://github.com/martin-sedrmajer/vox-aac\">github.com/martin-sedrmajer/vox-aac</a>",
+      foot3: "Voice: Supertonic 3 by Supertone Inc. (OpenRAIL-M license), converted by the sherpa-onnx project."
+    }
+  };
+
+  // Původní české texty si uloží z HTML, aby šlo přepínat tam i zpět.
+  const cs = { title: document.title };
+  document.querySelectorAll("[data-i18n]").forEach((el) => { cs[el.dataset.i18n] = el.textContent; });
+  document.querySelectorAll("[data-i18n-html]").forEach((el) => { cs[el.dataset.i18nHtml] = el.innerHTML; });
+  document.querySelectorAll("[data-i18n-alt]").forEach((el) => { cs[el.dataset.i18nAlt] = el.alt; });
+  T.cs = cs;
+
+  const sample = document.getElementById("sample");
+  const listen = document.getElementById("listen");
+  const icon = document.getElementById("listenIcon");
+  const PLAY = "M8 5v14l11-7z", STOP = "M6 6h12v12H6z";
+
+  function setLang(lang) {
+    const t = T[lang] || T.cs;
+    document.documentElement.lang = lang;
+    document.title = t.title;
+    document.querySelectorAll("[data-i18n]").forEach((el) => { if (t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
+    document.querySelectorAll("[data-i18n-html]").forEach((el) => { if (t[el.dataset.i18nHtml]) el.innerHTML = t[el.dataset.i18nHtml]; });
+    document.querySelectorAll("[data-i18n-alt]").forEach((el) => { if (t[el.dataset.i18nAlt]) el.alt = t[el.dataset.i18nAlt]; });
+    document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+    document.getElementById("shot").src = "img/vox-" + lang + ".webp";
+    stopSample();
+    sample.src = "audio/vox-" + lang + ".mp3";
+    try { localStorage.setItem("vox.lang", lang); } catch (_) { /* bez úložiště */ }
+  }
+
+  function stopSample() {
+    sample.pause();
+    sample.currentTime = 0;
+    listen.setAttribute("aria-pressed", "false");
+    icon.firstElementChild.setAttribute("d", PLAY);
+  }
+
+  listen.addEventListener("click", () => {
+    if (!sample.paused) { stopSample(); return; }
+    sample.play().then(() => {
+      listen.setAttribute("aria-pressed", "true");
+      icon.firstElementChild.setAttribute("d", STOP);
+    }).catch(() => { /* přehrání zablokované */ });
+  });
+  sample.addEventListener("ended", stopSample);
+
+  document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
+
+  let start = "cs";
+  try { start = localStorage.getItem("vox.lang") || ((navigator.language || "").toLowerCase().startsWith("cs") ? "cs" : "en"); } catch (_) { /* bez úložiště */ }
+  if (start !== "cs") setLang(start);
+</script>
+</body>
+</html>

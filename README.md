@@ -8,6 +8,10 @@ Vox is an AAC (augmentative and alternative communication) app for people who ca
 write but have lost their voice, for example after a stroke, with ALS/MND, after laryngeal
 surgery, or temporarily after an operation.
 
+**[Download and listen to the voice →](https://martin-sedrmajer.github.io/vox-aac/)**
+
+![The Vox window: a text box with a large Speak button, phrase groups and phrase buttons](docs/img/vox-en.webp)
+
 ## Features
 
 - **Natural offline voice in Czech and English.** Vox ships with
@@ -58,10 +62,17 @@ powershell -ExecutionPolicy Bypass -File build-portable.ps1
 
 The result is `dist\Vox-<version>-win-x64.zip`.
 
-## Status
+## Status and roadmap
 
 Early version, built and tested by one developer. Feedback from AAC users, speech
 therapists and caregivers is very welcome.
+
+Planned:
+
+- **Android version** with the same offline voice, phrases and history
+- Testing with real users and speech therapists
+- More languages (Supertonic 3 supports 31)
+- Personal voice from the user's own recordings, for people who are about to lose their voice
 
 ## License
 

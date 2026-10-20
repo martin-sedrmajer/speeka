@@ -374,7 +374,8 @@ public sealed class Bridge : IDisposable
             settings = _settings.Current,
             voices = VoiceList(),
             windowsVoices = WindowsTts.Voices(),
-            voicesDir = AppPaths.VoicesDir
+            voicesDir = AppPaths.VoicesDir,
+            version = typeof(Bridge).Assembly.GetName().Version?.ToString(3) ?? ""
         });
     }
 
