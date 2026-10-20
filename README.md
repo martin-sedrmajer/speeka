@@ -62,7 +62,9 @@ Portable release build (self-contained, with the voice bundled and zipped):
 powershell -ExecutionPolicy Bypass -File build-portable.ps1
 ```
 
-The result is `dist\Vox-<version>-win-x64.zip`.
+The result is `dist\Vox-<version>-win-x64.zip`. With `-Msix` the script also builds a
+Microsoft Store package (`dist\Vox-<version>-x64.msix`), using the identity in
+`Package\StoreIdentity.json` and `makeappx.exe` from the Windows SDK.
 
 ## Status and roadmap
 

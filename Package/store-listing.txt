@@ -1,0 +1,112 @@
+﻿VOX - TEXTY PRO STRÁNKU V MICROSOFT STORE
+(kopírovat do Partner Center -> Store listings,
+zvlášť čeština a angličtina)
+
+
+=== ČEŠTINA ===
+
+Krátký popis
+------------
+Vox mluví za vás. Napíšete nebo klepnete na frázi
+a Vox to řekne přirozeným hlasem, česky i anglicky.
+Bez internetu, bez účtu, zdarma.
+
+Popis
+-----
+Vox je bezplatná pomůcka pro lidi, kteří umějí číst
+a psát, ale nemohou mluvit: po mozkové mrtvici,
+s ALS, po operaci hrtanu nebo dočasně po zákroku.
+
+Napíšete, co chcete říct, nebo klepnete na připravenou
+frázi, a Vox to řekne přirozeným hlasem. Jedním
+klepnutím přepnete mezi češtinou a angličtinou,
+hodí se to třeba v nemocnici v zahraničí.
+
+Vox běží celý offline. Nemá účty, nic nesleduje
+a nic z toho, co napíšete, neodchází z počítače.
+
+Vox je otevřený software (GPL-3.0):
+https://github.com/martin-sedrmajer/vox-aac
+
+Funkce (každá zvlášť do pole Features)
+-------
+Přirozený neuronový hlas, česky i anglicky stejným hlasem
+Připravené fráze ve skupinách, naléhavé fráze červeně
+Vlastní fráze a skupiny
+Historie řečených vět, opakování jedním klepnutím
+Hlasitost až 200 %, vyrovnání hlasitosti a zvýraznění pro nedoslýchavé
+Slovník výslovnosti pro slova, která hlas říká špatně
+Zámek nastavení pro pečovatele
+Velké písmo, tmavý i světlý vzhled s vysokým kontrastem
+Celý offline: žádný účet, žádný cloud, žádné sledování
+Aplikace v češtině nebo angličtině
+
+Klíčová slova (Search terms, max. 7)
+-------------
+AAC, hlas, řeč, afázie, text na řeč, pomůcka, komunikace
+
+
+=== ENGLISH ===
+
+Short description
+-----------------
+Vox speaks for you. Type or tap a phrase and Vox says
+it out loud in a natural voice, in Czech or English.
+No internet, no account, free.
+
+Description
+-----------
+Vox is a free communication aid for people who can
+read and write but can't speak: after a stroke, with
+ALS/MND, after laryngeal surgery, or for a while
+after an operation.
+
+Type what you want to say or tap a ready-made phrase,
+and Vox says it out loud in a natural voice. One tap
+switches between English and Czech.
+
+Vox runs fully offline. There are no accounts, no
+tracking, and nothing you type ever leaves your
+computer.
+
+Vox is free software (GPL-3.0):
+https://github.com/martin-sedrmajer/vox-aac
+
+Features (one per Features field)
+--------
+Natural neural voice, the same voice in English and Czech
+Ready-made phrases in groups, urgent phrases in red
+Your own phrases and groups
+History of what you said, repeat with one tap
+Volume up to 200 %, level matching and a clarity boost for listeners who are hard of hearing
+Pronunciation dictionary for words the voice gets wrong
+Caregiver lock for settings
+Large text, dark and high-contrast light themes
+Fully offline: no account, no cloud, no tracking
+App in English or Czech
+
+Search terms (max. 7)
+------------
+AAC, text to speech, speech aid, aphasia, voice, communication, accessibility
+
+
+=== OSTATNÍ ===
+
+Zásady ochrany soukromí (Privacy policy URL):
+https://martin-sedrmajer.github.io/vox-aac/privacy.html
+
+Web (Website):
+https://martin-sedrmajer.github.io/vox-aac/
+
+Podpora (Support contact):
+https://github.com/martin-sedrmajer/vox-aac/issues
+
+Kategorie: Produktivita (Productivity). Ne zdravotní
+kategorie: Vox je komunikační pomůcka, ne zdravotní
+aplikace.
+
+Screenshoty (2360 x 1440, PNG):
+Package\Screenshots\vox-cs.png (česká stránka)
+Package\Screenshots\vox-en.png (anglická stránka)
+
+Ikona obchodu 300 x 300: Package\Assets\StoreListing-300.png

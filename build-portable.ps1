@@ -2,11 +2,14 @@
 #  - self-contained .NET 8 (uživatel nemusí nic instalovat, stačí WebView2 Runtime z Windows 10/11),
 #  - přibalený hlas Supertonic 3 ve složce voices\supertonic-3,
 #  - licence převzatých částí,
-#  - ZIP v dist\Vox-<verze>-win-x64.zip.
-# Spouští se z kořene repozitáře:  powershell -ExecutionPolicy Bypass -File build-portable.ps1
+#  - ZIP v dist\Vox-<verze>-win-x64.zip,
+#  - s přepínačem -Msix navíc balíček pro Microsoft Store: dist\Vox-<verze>-x64.msix
+#    (potřebuje Package\StoreIdentity.json s údaji z Partner Center a makeappx.exe z Windows SDK).
+# Spouští se z kořene repozitáře:  powershell -ExecutionPolicy Bypass -File build-portable.ps1 [-Msix]
 
 param(
-    [string]$Runtime = "win-x64"
+    [string]$Runtime = "win-x64",
+    [switch]$Msix
 )
 
 $ErrorActionPreference = "Stop"
@@ -110,3 +113,60 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $sizeMb = [math]::Round((Get-Item $zip).Length / 1MB)
 Write-Host "Hotovo: $zip ($sizeMb MB)"
+
+if (-not $Msix) { return }
+
+# ---------- balíček MSIX pro Microsoft Store (podepíše ho Store) ----------
+
+function Find-MakeAppx {
+    $cmd = Get-Command makeappx.exe -ErrorAction SilentlyContinue
+    if ($cmd) { return $cmd.Source }
+    $kits = Join-Path ${env:ProgramFiles(x86)} "Windows Kits\10\bin"
+    if (-not (Test-Path $kits)) { return $null }
+    $candidates = @(Get-ChildItem $kits -Directory | Sort-Object Name -Descending |
+        ForEach-Object { Join-Path $_.FullName "x64\makeappx.exe" }) + @(Join-Path $kits "x64\makeappx.exe")
+    return $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+}
+
+$identityFile = Join-Path $root "Package\StoreIdentity.json"
+$id = Get-Content $identityFile -Raw -Encoding UTF8 | ConvertFrom-Json
+foreach ($key in "Name", "Publisher", "PublisherDisplayName", "DisplayName") {
+    if (-not $id.$key -or $id.$key -like "DOPLNIT*") {
+        throw "V Package\StoreIdentity.json chybí $key. Údaje najdeš v Partner Center: aplikace -> Product management -> Product identity."
+    }
+}
+
+$makeAppx = Find-MakeAppx
+if (-not $makeAppx) {
+    throw "Chybí makeappx.exe z Windows SDK. Nainstaluj ho: winget install --id Microsoft.WindowsSDK.10.0.26100 --exact"
+}
+
+# Store chce čtyřmístnou verzi s nulou na konci (0.2.0 -> 0.2.0.0).
+$parts = @($version.Split(".") | Select-Object -First 3)
+while ($parts.Count -lt 3) { $parts += "0" }
+$msixVersion = ($parts -join ".") + ".0"
+
+$layout = Join-Path $dist "msix"
+if (Test-Path $layout) { Remove-Item $layout -Recurse -Force }
+Copy-Item $out $layout -Recurse
+Copy-Item (Join-Path $root "Package\Assets") (Join-Path $layout "Assets") -Recurse
+Remove-Item (Join-Path $layout "Assets\StoreListing-300.png") -ErrorAction SilentlyContinue   # jen pro stránku obchodu
+
+$esc = { param($v) [Security.SecurityElement]::Escape([string]$v) }
+$manifest = Get-Content (Join-Path $root "Package\AppxManifest.template.xml") -Raw -Encoding UTF8
+$manifest = $manifest.Replace("{{NAME}}", (& $esc $id.Name))
+$manifest = $manifest.Replace("{{PUBLISHER}}", (& $esc $id.Publisher))
+$manifest = $manifest.Replace("{{PUBLISHER_DISPLAY_NAME}}", (& $esc $id.PublisherDisplayName))
+$manifest = $manifest.Replace("{{DISPLAY_NAME}}", (& $esc $id.DisplayName))
+$manifest = $manifest.Replace("{{VERSION}}", $msixVersion)
+[IO.File]::WriteAllText((Join-Path $layout "AppxManifest.xml"), $manifest, (New-Object Text.UTF8Encoding $false))
+
+$msixFile = Join-Path $dist "Vox-$version-x64.msix"
+if (Test-Path $msixFile) { Remove-Item $msixFile -Force }
+Write-Host "Balím MSIX $msixVersion..."
+& $makeAppx pack /d $layout /p $msixFile /o | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "makeappx nevytvořil balíček (spusť ho ručně pro podrobnosti: `"$makeAppx`" pack /d `"$layout`" /p `"$msixFile`")." }
+
+$msixMb = [math]::Round((Get-Item $msixFile).Length / 1MB)
+Write-Host "Hotovo: $msixFile ($msixMb MB). Nahraj ho v Partner Center; podepíše ho Store."
+Write-Host "Vyzkoušet bez podpisu (zapnutý režim pro vývojáře): Add-AppxPackage -Register `"$layout\AppxManifest.xml`""

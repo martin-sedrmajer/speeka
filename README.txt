@@ -15,6 +15,9 @@ LICENSE             GPL-3.0 (licence Voxu)
 LICENSE-EXCEPTION.txt  výjimka pro WebView2
 THIRD-PARTY-NOTICES.txt  licence převzatých částí
 README.md           popis pro GitHub (anglicky)
+Package\            Microsoft Store: šablona manifestu MSIX,
+                    údaje z Partner Center (StoreIdentity.json),
+                    ikony, screenshoty, texty pro obchod
 docs\               webová stránka pro uživatele (GitHub
                     Pages): index.html, screenshoty, ukázky
                     hlasu Muž 2 česky a anglicky
@@ -198,3 +201,25 @@ Licenci modelu (OpenRAIL-M) stahuje z Hugging Face;
 když to nejde, vypíše varování a licenci je potřeba
 přidat ručně. Uživatel potřebuje jen WebView2 Runtime
 (ve Windows 10/11 bývá).
+
+
+MICROSOFT STORE
+---------------
+build-portable.ps1 -Msix vyrobí navíc balíček
+dist\Vox-<verze>-x64.msix. Rozložení je stejné jako
+v ZIPu (včetně Supertonicu), přidají se ikony
+z Package\Assets a AppxManifest.xml ze šablony
+Package\AppxManifest.template.xml. Identitu balíčku
+(Name, Publisher, PublisherDisplayName, DisplayName)
+bere z Package\StoreIdentity.json, údaje jsou
+v Partner Center u aplikace v části Product identity.
+Verze balíčku je verze z Vox.csproj s nulou na konci
+(0.2.0 -> 0.2.0.0). Balíček není podepsaný, podepíše
+ho Store. Potřebuje makeappx.exe z Windows SDK.
+Aplikace běží jako full trust (runFullTrust), jazyky
+balíčku jsou čeština a angličtina, takže Store chce
+stránku obchodu v obou (texty v Package\store-listing.txt).
+Ve verzi ze Storu Windows přesměrovává zápisy do
+AppData do složky balíčku; AppPaths.VoicesDirForShell
+proto pro Průzkumník vrací přesměrovanou cestu.
+Zásady ochrany soukromí: docs\privacy.html.

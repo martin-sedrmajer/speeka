@@ -128,7 +128,7 @@ public sealed class Bridge : IDisposable
                     break;
 
                 case "voices.open":
-                    try { Process.Start(new ProcessStartInfo("explorer.exe", $"\"{AppPaths.VoicesDir}\"") { UseShellExecute = true }); }
+                    try { Process.Start(new ProcessStartInfo("explorer.exe", $"\"{AppPaths.VoicesDirForShell}\"") { UseShellExecute = true }); }
                     catch { /* průzkumník se nespustil */ }
                     break;
             }
@@ -392,7 +392,7 @@ public sealed class Bridge : IDisposable
             settings = _settings.Current,
             voices = VoiceList(),
             windowsVoices = WindowsTts.Voices(),
-            voicesDir = AppPaths.VoicesDir,
+            voicesDir = AppPaths.VoicesDirForShell,
             version = typeof(Bridge).Assembly.GetName().Version?.ToString(3) ?? ""
         });
     }
