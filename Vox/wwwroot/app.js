@@ -163,7 +163,7 @@ const UI_EN = {
   volumeKeySpeaks: "The volume down button speaks the text",
   phrasesH: "Phrases and history",
   clearHistory: "Clear history",
-  offline: "Vox runs fully offline: no text or sound ever leaves your computer.",
+  offline: "Vox runs fully offline: no text or sound is ever sent anywhere.",
   aboutH: "About",
   author: "Author: Martin Sedrmajer",
   license: "Free software under the GPL-3.0 license:",

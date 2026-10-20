@@ -14,7 +14,7 @@
     <ApplicationTitle>Vox</ApplicationTitle>
     <!-- Identifikátor aplikace na Google Play; po prvním vydání už nejde změnit. -->
     <ApplicationId>io.github.martinsedrmajer.vox</ApplicationId>
-    <ApplicationDisplayVersion>0.2.0</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>0.3.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
     <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>

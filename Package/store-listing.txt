@@ -45,6 +45,17 @@ Klíčová slova (Search terms, max. 7)
 -------------
 AAC, hlas, řeč, afázie, text na řeč, pomůcka, komunikace
 
+Co je nového ve verzi 0.3.0 (What's new in this version)
+---------------------------
+- Smajlíky :D a xD Vox vysloví jako smích, ostatní
+  smajlíky a emoji přeskočí.
+- Skupiny frází jsou v jedné posuvné liště,
+  na fráze zbývá víc místa.
+- Delší fráze se do tlačítek vejdou celé.
+- Přepínač CZ / EN jde schovat z horní lišty,
+  pak je v Nastavení.
+- Angličtina má přirozenější výchozí tempo.
+
 
 === ENGLISH ===
 
@@ -88,6 +99,17 @@ App in English or Czech
 Search terms (max. 7)
 ------------
 AAC, text to speech, speech aid, aphasia, voice, communication, accessibility
+
+What's new in version 0.3.0
+---------------------------
+- Emoticons: Vox says :D and xD as laughter and skips
+  other emoticons and emoji.
+- Phrase groups sit in a single scrolling bar, leaving
+  more room for phrases.
+- Longer phrases now fit in their buttons.
+- The CZ / EN switch can be hidden from the top bar;
+  it then lives in Settings.
+- English has a more natural default speed.
 
 
 === OSTATNÍ ===
