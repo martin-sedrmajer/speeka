@@ -127,6 +127,23 @@ body.speaking .mark .w3 { animation: wave .5s ease-in-out .3s infinite alternate
 .lang button, .seg button { border: none; border-radius: 0; background: transparent; padding: .45rem .9rem; font-weight: 700; color: var(--dim); }
 .lang button + button, .seg button + button { border-left: 2px solid var(--line2); }
 .lang-row { display: flex; align-items: center; gap: .7rem; margin: .1rem 0 .6rem 1.9rem; }
+/* výběr jazyka řeči (posouvací nabídka, naposledy použité nahoře) */
+select.lang-select { width: auto; min-width: 0; max-width: 12rem; flex: none; font-weight: 700; padding: .45rem .7rem; border: 2px solid var(--line2); border-radius: 10px; }
+.lang-pick { position: relative; flex: none; display: flex; }
+
+/* hlas se připravuje: kolečko místo textu na tlačítku Říct, fráze lehce zešednou */
+body.preparing #btnSpeak { color: transparent; position: relative; pointer-events: none; }
+body.preparing #btnSpeak::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 1.5em; height: 1.5em; margin: -.75em 0 0 -.75em;
+  border: 3px solid rgba(255, 255, 255, .35); border-top-color: #fff; border-radius: 50%;
+  animation: vox-spin .8s linear infinite;
+}
+body.preparing .board .tile { opacity: .55; }
+@keyframes vox-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { body.preparing #btnSpeak::after { animation-duration: 2.4s; } }
+/* v Nastavení je výběr jazyka řeči přes celou šířku jako ostatní volby */
+#langSettings { display: block; width: 100%; max-width: none; font-weight: 400; padding: .5rem .7rem; border-radius: 8px; }
+.lang-short { display: none; }
 .lang button.active, .seg button.active { background: var(--accent); color: var(--on-accent); }
 .seg { margin-bottom: .5rem; }
 .seg button { flex: 1; font-weight: 600; }
@@ -189,9 +206,13 @@ body.flipped .tile.add { align-items: center; }
 .cats button.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .cats button.add { border-style: dashed; color: var(--dim); }
 
-.board-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .35rem; }
+.board-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .3rem; }
 .board-head { display: flex; align-items: center; gap: .5rem; }
-.board-title { flex: 1; color: var(--dim); font-size: .95rem; }
+.board-title { flex: 1; color: var(--dim); font-size: .9rem; }
+/* tlačítko úprav je malé a spouští se podržením – průběh podržení vyplňuje pozadí */
+.board-head button { padding: .2rem .6rem; font-size: .88rem; border-width: 1.5px; position: relative; overflow: hidden; }
+#btnEdit::before { content: ""; position: absolute; inset: 0; background: var(--accent); opacity: .25; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+#btnEdit.holding::before { transform: scaleX(1); transition: transform .55s linear; }
 .board-tools { display: flex; gap: .4rem; }
 body.editing #btnEdit { color: var(--accent); border-color: var(--accent); }
 
@@ -318,8 +339,10 @@ label.check { display: flex; align-items: center; color: var(--text); }
 
 @media (max-width: 640px) {
   .top { padding: .5rem .8rem; gap: .5rem; flex-wrap: wrap; }
-  .main { padding: .8rem; }
-  .board { grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
+  .main { padding: .7rem; gap: .5rem; }
+  /* telefon: menší vnitřní okraje a mezery dlaždic, ať se vejde víc frází */
+  .board { grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: .45rem; }
+  .tile { padding: .55rem .7rem; min-height: 4.6rem; }
   .grid2 { grid-template-columns: 1fr; }
 
   /* telefon: stav hlasu jen při načítání nebo chybě, na vlastním řádku */
@@ -327,6 +350,13 @@ label.check { display: flex; align-items: center; color: var(--text); }
   .voice-status.ready, .voice-status:empty { display: none; }
   .top-actions { margin-left: auto; }
   .lang button { padding: .4rem .7rem; }
+  /* na telefonu je v liště jen zkratka jazyka („CZ ▾“); průhledný výběr nad ní po klepnutí
+     otevře seznam s celými názvy, ať se vejde i nápis aplikace */
+  .lang-short { display: inline-flex; align-items: center; gap: .35rem; padding: .4rem .7rem; font-weight: 700;
+    border: 2px solid var(--line2); border-radius: 10px; background: var(--bg2); }
+  .lang-short::after { content: "▾"; font-size: .8em; color: var(--dim); }
+  #langTopWrap select.lang-select { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; opacity: 0; cursor: pointer; }
+  #langTop { max-width: min(12rem, calc(100vw - 8.5rem)); padding: .4rem .5rem; }
 
   /* tlačítka jen s ikonou (popis zůstává v title pro čtečky obrazovky) */
   #btnSettings, #btnRepeat, #btnClear, #btnStopTop { font-size: 0; min-width: 3rem; }
@@ -339,8 +369,9 @@ label.check { display: flex; align-items: center; color: var(--text); }
   button.big { padding: .8rem 1rem; }
 }
 
-@media (max-width: 380px) {
-  .name { display: none; }
+/* největší písmo na úzkém telefonu: nápis by odsunul nastavení na druhý řádek */
+@media (max-width: 420px) {
+  body.fs-xl .name { display: none; }
 }
 
 /* ---------- O aplikaci ---------- */

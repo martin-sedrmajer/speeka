@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vox</title>
+  <title>Speeka</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body class="fs-l">
@@ -14,12 +14,12 @@
     <span class="mark" aria-hidden="true">
       <svg viewBox="0 0 32 32"><path class="bubble" d="M6 7h20a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H14l-6 5v-5H6a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3z"/><path class="w1" d="M12 12.5v5"/><path class="w2" d="M16 10.5v9"/><path class="w3" d="M20 12.5v5"/></svg>
     </span>
-    <span class="name">VOX</span>
+    <span class="name">SPEEKA</span>
   </div>
   <div id="voiceStatus" class="voice-status" role="status" aria-live="polite" data-t="statusLoading">Připravuji hlas…</div>
-  <div class="lang" id="langTop" role="group" aria-label="Jazyk řeči" data-t-aria="speechLang">
-    <button data-lang="cs" title="Mluvit česky" data-t-title="speakCs">CZ</button>
-    <button data-lang="en" title="Mluvit anglicky" data-t-title="speakEn">EN</button>
+  <div class="lang-pick" id="langTopWrap">
+    <span class="lang-short" id="langTopShort" aria-hidden="true"></span>
+    <select class="lang-select" id="langTop" aria-label="Jazyk řeči" data-t-aria="speechLang" title="Jazyk řeči a frází" data-t-title="speechLangHere"></select>
   </div>
   <div class="top-actions">
     <button id="btnStopTop" class="stop" title="Zastavit (Esc)" data-t-title="stopTitle" data-t="stop" hidden>■ Zastavit</button>
@@ -61,12 +61,25 @@
 
   <div class="drawer-body">
     <div class="block">
+      <h3 data-t="langH">Jazyk</h3>
+      <label><span data-t="uiLanguage">Jazyk aplikace (App language)</span>
+        <select id="uiLanguage">
+          <option value="cs">Čeština</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+      <label><span data-t="speechLangHere">Jazyk řeči a frází</span>
+        <select class="lang-select" id="langSettings" aria-label="Jazyk řeči" data-t-aria="speechLang"></select>
+      </label>
+      <label class="check"><input id="showLanguageSwitch" type="checkbox"> <span data-t="showLanguageSwitch">Zobrazit výběr jazyka v horní liště</span></label>
+      <label><span data-t="translateTo">Pod frází ukázat překlad do jazyka</span>
+        <select id="translateTo"></select>
+      </label>
+      <p class="hint" data-t="translateHint">Když mluvíš jiným jazykem, uvidíš pod každou frází, co znamená. Hodí se pro cizojazyčné sestry, cestování i učení.</p>
+    </div>
+
+    <div class="block">
       <h3 data-t="voiceH">Hlas</h3>
-      <div class="seg" role="group" aria-label="Hlas pro jazyk" data-t-aria="voiceForLang">
-        <button data-vl="cs" data-t="voiceCs">Hlas pro češtinu</button>
-        <button data-vl="en" data-t="voiceEn">Hlas pro angličtinu</button>
-      </div>
-      <p class="hint" data-t="voiceSegHint">Každý jazyk má vlastní hlas. Přepínačem CZ / EN nahoře se mění jazyk frází i řeči.</p>
       <p class="hint bad" id="langWarn" hidden></p>
       <label><span data-t="engine">Druh hlasu</span>
         <select id="engine">
@@ -113,10 +126,31 @@
       </div>
       <p class="hint opt" data-engine="local" id="piperFxHint" data-t="piperFxHint">Jen pro hlasy Piper. Víc = živější projev, příliš vysoké hodnoty můžou hlas rozkolísat. Výchozí 0,67 a 0,80.</p>
 
+      <div class="opt" data-engine="local">
+        <label><span data-t="synthSteps">Kvalita hlasu</span>
+          <select id="synthSteps">
+            <option value="0" data-t="stepsAuto">Automaticky (podle zařízení)</option>
+            <option value="8" data-t="stepsHigh">Nejvyšší (pomalejší)</option>
+            <option value="5" data-t="stepsMid">Vyvážená</option>
+            <option value="3" data-t="stepsFast">Nejrychlejší</option>
+          </select>
+        </label>
+        <p class="hint" data-t="synthStepsHint">Na pomalejším telefonu zkrátí čekání na hlas. Platí pro hlas Supertonic.</p>
+      </div>
+
       <div class="row">
         <button id="btnTest" data-t="test">▶ Vyzkoušet</button>
         <button id="btnVoicesFolder" class="ghost" data-t="voicesFolder">Otevřít složku s hlasy</button>
       </div>
+    </div>
+
+    <div class="block">
+      <h3 data-t="pronH">Výslovnost</h3>
+      <p class="hint" data-t-html="pronHint">Když hlas nějaké slovo vyslovuje špatně, napiš ho sem tak, jak má znít. Jeden řádek = jedno slovo: <b>napsáno = vysloví se</b>. Na tlačítkách i v poli zůstane správný pravopis.</p>
+      <label><span data-t="pronLang">Slovník pro jazyk</span>
+        <select id="pronLang"></select>
+      </label>
+      <textarea id="pron" rows="4" class="mono" spellcheck="false" aria-label="Slovník výslovnosti" data-t-aria="pronH"></textarea>
     </div>
 
     <div class="block">
@@ -136,24 +170,16 @@
     </div>
 
     <div class="block">
-      <h3 data-t="pronH">Výslovnost</h3>
-      <p class="hint" data-t-html="pronHint">Když hlas nějaké slovo vyslovuje špatně, napiš ho sem tak, jak má znít. Jeden řádek = jedno slovo: <b>napsáno = vysloví se</b>. Na tlačítkách i v poli zůstane správný pravopis.</p>
-      <label><span data-t="pronCs">Čeština</span>
-        <textarea id="pronCs" rows="3" class="mono" spellcheck="false" placeholder="včera = v čera&#10;shledanou = schledanou"></textarea>
-      </label>
-      <label><span data-t="pronEn">Angličtina</span>
-        <textarea id="pronEn" rows="2" class="mono" spellcheck="false"></textarea>
-      </label>
+      <h3 data-t="controlsH">Ovládání</h3>
+      <label class="check"><input id="enterSpeaks" type="checkbox"> <span data-t="enterSpeaks">Enter řekne text (nový řádek: Shift+Enter)</span></label>
+      <label class="check"><input id="clearAfterSpeak" type="checkbox"> <span data-t="clearAfterSpeak">Po vyslovení pole vymazat</span></label>
+      <label class="check" hidden><input id="volumeKeySpeaks" type="checkbox"> <span data-t="volumeKeySpeaks">Tlačítko pro snížení hlasitosti řekne text</span></label>
+      <label class="check"><input id="flipUi" type="checkbox"> <span data-t="flipUi">Flip UI: tlačítko Říct vpravo, fráze zarovnané doprava</span></label>
+      <label class="check"><input id="lockSettings" type="checkbox"> <span data-t="lockSettings">Zamknout nastavení a úpravy frází příkladem (pro pečovatele)</span></label>
     </div>
 
     <div class="block">
-      <h3 data-t="lookH">Ovládání a vzhled</h3>
-      <label><span data-t="uiLanguage">Jazyk aplikace (App language)</span>
-        <select id="uiLanguage">
-          <option value="cs">Čeština</option>
-          <option value="en">English</option>
-        </select>
-      </label>
+      <h3 data-t="lookH">Vzhled</h3>
       <label><span data-t="fontSize">Velikost písma</span>
         <select id="fontSize">
           <option value="m" data-t="fontM">Střední</option>
@@ -176,19 +202,6 @@
           <option value="purple" data-t="purple">Fialová</option>
         </select>
       </label>
-      <label class="check"><input id="flipUi" type="checkbox"> <span data-t="flipUi">Flip UI: tlačítko Říct vpravo, fráze zarovnané doprava</span></label>
-      <label class="check"><input id="showLanguageSwitch" type="checkbox"> <span data-t="showLanguageSwitch">Zobrazit přepínač CZ / EN v horní liště</span></label>
-      <div class="lang-row" id="langSettingsRow" hidden>
-        <span data-t="speechLangHere">Jazyk řeči a frází</span>
-        <div class="lang" role="group" aria-label="Jazyk řeči" data-t-aria="speechLang">
-          <button data-lang="cs" title="Mluvit česky" data-t-title="speakCs">CZ</button>
-          <button data-lang="en" title="Mluvit anglicky" data-t-title="speakEn">EN</button>
-        </div>
-      </div>
-      <label class="check"><input id="enterSpeaks" type="checkbox"> <span data-t="enterSpeaks">Enter řekne text (nový řádek: Shift+Enter)</span></label>
-      <label class="check"><input id="clearAfterSpeak" type="checkbox"> <span data-t="clearAfterSpeak">Po vyslovení pole vymazat</span></label>
-      <label class="check"><input id="lockSettings" type="checkbox"> <span data-t="lockSettings">Zamknout nastavení a úpravy frází příkladem (pro pečovatele)</span></label>
-      <label class="check" hidden><input id="volumeKeySpeaks" type="checkbox"> <span data-t="volumeKeySpeaks">Tlačítko pro snížení hlasitosti řekne text</span></label>
     </div>
 
     <div class="block">
@@ -197,12 +210,12 @@
         <button id="btnResetPhrases" class="danger-outline"></button>
         <button id="btnClearHistory" class="danger-outline" data-t="clearHistory">Vymazat historii</button>
       </div>
-      <p class="hint" data-t="offline">Vox běží celý offline: text ani zvuk nikam neodcházejí.</p>
+      <p class="hint" data-t="offline">Speeka běží celá offline: text ani zvuk nikam neodcházejí.</p>
     </div>
 
     <div class="block about">
       <h3 data-t="aboutH">O aplikaci</h3>
-      <p><b>Vox</b> <span id="appVersion"></span><br>
+      <p><b>Speeka</b> <span id="appVersion"></span><br>
         <span data-t="author">Autor: Martin Sedrmajer</span><br>
         <span data-t="license">Otevřený software pod licencí GPL-3.0:</span>
         <a href="https://github.com/martin-sedrmajer/vox-aac" target="_blank" rel="noopener">github.com/martin-sedrmajer/vox-aac</a></p>
@@ -229,7 +242,10 @@
       <label><span data-t="inEnglish">Anglicky</span>
         <textarea id="dlgText" rows="2" lang="en"></textarea>
       </label>
-      <p class="hint" data-t="dlgHint">Na tlačítku je a řekne se znění v jazyce, který je zrovna zapnutý. Když jedno chybí, použije se druhé.</p>
+      <label id="dlgOtherWrap" hidden><span id="dlgOtherLabel"></span>
+        <textarea id="dlgOther" rows="2"></textarea>
+      </label>
+      <p class="hint" data-t="dlgHint">Na tlačítku je a řekne se znění v jazyce, který je zrovna zapnutý. Když v něm chybí, použije se angličtina (nebo čeština).</p>
       <label class="check"><input id="dlgUrgent" type="checkbox"> <span data-t="urgent">Naléhavá (výrazné červené tlačítko)</span></label>
     </div>
     <div id="dlgCategory" hidden>
@@ -238,6 +254,9 @@
       </label>
       <label><span data-t="nameEn">Název anglicky</span>
         <input id="dlgCatNameEn" maxlength="40" lang="en">
+      </label>
+      <label id="dlgCatOtherWrap" hidden><span id="dlgCatOtherLabel"></span>
+        <input id="dlgCatOther" maxlength="40">
       </label>
     </div>
     <div class="row between">

@@ -14,7 +14,7 @@ public partial class App : Application
 
     private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        MessageBox.Show(e.Exception.ToString(), Core.Loc.T("Vox – neočekávaná chyba", "Vox – unexpected error"), MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(e.Exception.ToString(), Core.Loc.T("Speeka – neočekávaná chyba", "Speeka – unexpected error"), MessageBoxButton.OK, MessageBoxImage.Error);
         e.Handled = true;
     }
 }

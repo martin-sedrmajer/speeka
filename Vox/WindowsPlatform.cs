@@ -11,6 +11,8 @@ public sealed class WindowsPlatform : IVoxPlatform
 
     public string AppVersion => typeof(WindowsPlatform).Assembly.GetName().Version?.ToString(3) ?? "";
 
+    public int DefaultSynthesisSteps => 8;
+
     public IReadOnlyList<string> SystemVoices() => WindowsTts.Voices();
 
     public string? SystemVoiceFor(string culture) => WindowsTts.VoiceFor(culture);

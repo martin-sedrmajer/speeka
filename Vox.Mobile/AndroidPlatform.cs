@@ -9,6 +9,9 @@ public sealed class AndroidPlatform : IVoxPlatform
 
     public string AppVersion => AppInfo.Current.VersionString;
 
+    // na telefonu je výpočet hlasu několikrát pomalejší než na počítači; 4 kroky znějí skoro stejně
+    public int DefaultSynthesisSteps => 4;
+
     public IReadOnlyList<string> SystemVoices() => Array.Empty<string>();
 
     public string? SystemVoiceFor(string culture) => null;

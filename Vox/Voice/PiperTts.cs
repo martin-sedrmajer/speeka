@@ -18,6 +18,12 @@ public sealed class PiperTts : IDisposable
     private readonly List<string> _recent = new();   // klíče od naposledy použitého
     private const int MaxLoaded = 2;
 
+    /// <summary>
+    /// Počet kroků výpočtu Supertonicu: víc = čistší zvuk, méně = rychlejší (důležité na slabších telefonech).
+    /// Nastavuje spojka podle Nastavení a platformy.
+    /// </summary>
+    public int SupertonicSteps { get; set; } = 8;
+
     public byte[] Synthesize(string text, VoiceSettings v, string lang)
     {
         lock (_lock)
@@ -50,7 +56,7 @@ public sealed class PiperTts : IDisposable
 
             var speed = (float)Math.Clamp(v.PiperSpeed, 0.5, 2.0);
             var audio = supertonic
-                ? GenerateSupertonic(tts, text, speed, Math.Min(speaker, SupertonicSpeakerCount - 1), lang)
+                ? GenerateSupertonic(tts, text, speed, Math.Min(speaker, SupertonicSpeakerCount - 1), lang, SupertonicSteps)
                 : tts.Generate(text, speed, speaker);
             if (audio.Samples == null || audio.Samples.Length == 0)
                 throw new InvalidOperationException(Loc.T("Hlas nevytvořil žádný zvuk.", "The voice produced no sound."));
@@ -153,14 +159,13 @@ public sealed class PiperTts : IDisposable
         "id", "it", "lt", "lv", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "tr", "uk", "vi"
     };
 
-    private static OfflineTtsGeneratedAudio GenerateSupertonic(OfflineTts tts, string text, float speed, int speaker, string lang)
+    private static OfflineTtsGeneratedAudio GenerateSupertonic(OfflineTts tts, string text, float speed, int speaker, string lang, int steps)
     {
         var config = new OfflineTtsGenerationConfig
         {
             Sid = Math.Max(0, speaker),
             Speed = speed,
-            // víc kroků = čistší zvuk; 8 je dobrý kompromis s rychlostí
-            NumSteps = 8
+            NumSteps = Math.Clamp(steps, 2, 12)
         };
         config.Extra["lang"] = SupertonicLangs.Contains(lang) ? lang.ToLowerInvariant() : "en";
         return tts.GenerateWithConfig(text, config, (_, _, _, _) => 1);

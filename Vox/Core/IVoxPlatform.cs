@@ -12,6 +12,9 @@ public interface IVoxPlatform
     /// <summary>Verze aplikace pro sekci O aplikaci (např. 0.2.0).</summary>
     string AppVersion { get; }
 
+    /// <summary>Výchozí počet kroků výpočtu hlasu (Nastavení „Kvalita hlasu: automaticky“). Telefony méně, ať se nečeká.</summary>
+    int DefaultSynthesisSteps { get; }
+
     /// <summary>Hlasy systému (na Windows SAPI). Prázdný seznam, když platforma žádné nemá.</summary>
     IReadOnlyList<string> SystemVoices();
 

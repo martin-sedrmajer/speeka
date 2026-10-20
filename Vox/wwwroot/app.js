@@ -11,12 +11,29 @@ const state = {
   voicesDir: "",
   activeCat: null,     // id skupiny, nebo "history"
   editing: false,
-  formLang: "en",      // pro který jazyk se v nastavení právě upravuje hlas
+  formLang: "en",      // hlas je jeden společný (uložený jako „voice“); voiceCs zůstává jen ze starších verzí
   draftVoices: null,   // { en, cs } – rozpracované hlasy v nastavení
+  draftPron: {},       // slovníky výslovnosti podle jazyka, rozpracované v nastavení
+  // jazyky řeči a frází (posílá C#, Languages.cs); záložní seznam pro případ, že nepřijde
+  languages: [
+    { code: "cs", short: "CZ", native: "Čeština", cs: "česky", en: "Czech" },
+    { code: "en", short: "EN", native: "English", cs: "anglicky", en: "English" },
+  ],
 };
 
 function lang() {
-  return state.settings && state.settings.language === "cs" ? "cs" : "en";
+  const code = state.settings && state.settings.language;
+  return state.languages.some((l) => l.code === code) ? code : "en";
+}
+
+function langInfo(code) {
+  return state.languages.find((l) => l.code === code) || state.languages[1] || state.languages[0];
+}
+
+// Název jazyka do textů ovládání: „německy“ / „German“.
+function langName(code) {
+  const l = langInfo(code);
+  return uiLang() === "en" ? l.en : l.cs;
 }
 
 // Na Androidu nejsou hlasy Windows ani složka s vlastními hlasy, ovládání se jim přizpůsobí.
@@ -42,22 +59,24 @@ function uiLang() {
 
 // Texty, které vyrábí skript. Klíč → [česky, anglicky]; {0} se nahradí parametrem.
 const MSG = {
-  placeholderCs: ["Napiš, co chceš říct (česky)…   Enter = říct", "Type what you want to say (in Czech)…   Enter = speak"],
-  placeholderEn: ["Napiš, co chceš říct (anglicky)…   Enter = říct", "Type what you want to say (in English)…   Enter = speak"],
+  placeholder: ["Napiš, co chceš říct ({0})…   Enter = říct", "Type what you want to say (in {0})…   Enter = speak"],
   untitled: ["(bez názvu)", "(untitled)"],
   nothingToRepeat: ["Zatím nebylo co zopakovat.", "Nothing to repeat yet."],
   history: ["🕘 Historie", "🕘 History"],
   addGroup: ["+ Skupina", "+ Group"],
-  historyTitle: ["Naposledy řečené – klepnutím zopakuješ", "Recently said – tap to say it again"],
+  historyTitle: ["Naposledy řečené", "Recently said"],
   historyEmpty: ["Zatím tu nic není. Co řekneš, objeví se tady.", "Nothing here yet. What you say will appear here."],
   editTitle: ["Úprava: klepni na frázi, nebo na název skupiny nahoře pro přejmenování", "Editing: tap a phrase, or tap the group name above to rename it"],
-  missingCs: ["(česky chybí)", "(Czech missing)"],
-  missingEn: ["(anglicky chybí)", "(English missing)"],
+  missingLang: ["({0} chybí)", "({0} missing)"],
+  noTranslation: ["Nezobrazovat", "Don't show"],
+  pronPlaceholder: ["napsáno = vysloví se", "written = spoken"],
+  inLang: ["{0}", "In {0}"],
   addPhrase: ["+ Přidat frázi", "+ Add phrase"],
   groupEmpty: ["Skupina je prázdná. Fráze přidáš přes „Upravit fráze“.", "This group is empty. Add phrases with “Edit phrases”."],
   inserted: ["Vloženo do pole – uprav a řekni.", "Added to the text box – edit it and speak."],
   done: ["✓ Hotovo", "✓ Done"],
   editPhrases: ["✎ Upravit fráze", "✎ Edit phrases"],
+  holdToEdit: ["Pro úpravu frází tlačítko podrž.", "Press and hold to edit phrases."],
   editPhrase: ["Upravit frázi", "Edit phrase"],
   newPhrase: ["Nová fráze", "New phrase"],
   fillPhrase: ["Vyplň frázi aspoň v jednom jazyce.", "Fill in the phrase in at least one language."],
@@ -72,9 +91,8 @@ const MSG = {
   multilingual: [", vícejazyčný", ", multilingual"],
   noVoice: ["(žádný hlas nenalezen)", "(no voice found)"],
   default: ["(výchozí)", "(default)"],
-  warnNotCzech: ["Tento hlas není český, česky bude mluvit s přízvukem (Kokoro česky nepřečte vůbec). Správnou výslovnost má Supertonic, Piper cs_CZ (jirka) nebo hlas Windows Microsoft Jakub.",
-                 "This is not a Czech voice. It will speak Czech with an accent (Kokoro can't read Czech at all). Supertonic, Piper cs_CZ (jirka) or the Windows voice Microsoft Jakub pronounce Czech correctly."],
   warnLang: ["Tento hlas je {0}, anglicky bude mluvit s přízvukem nebo špatně.", "This voice is {0}. It will speak English with an accent or incorrectly."],
+  warnSingleLang: ["Tento hlas umí jen jeden jazyk ({0}). Ostatními jazyky bude mluvit přibalený hlas Supertonic.", "This voice speaks only one language ({0}). Other languages will use the bundled Supertonic voice."],
   speakerNo: ["Mluvčí č. {0}", "Speaker no. {0}"],
   resetConfirm: ["Opravdu? Tvoje úpravy zmizí", "Sure? Your changes will be lost"],
   resetPhrases: ["Vrátit výchozí fráze", "Restore default phrases"],
@@ -95,8 +113,6 @@ function t(key, arg) {
 const UI_EN = {
   statusLoading: "Preparing the voice…",
   speechLang: "Speech language",
-  speakCs: "Speak Czech",
-  speakEn: "Speak English",
   stop: "■ Stop",
   stopTitle: "Stop (Esc)",
   settings: "Settings",
@@ -110,10 +126,6 @@ const UI_EN = {
   catsAria: "Phrase groups",
   close: "Close",
   voiceH: "Voice",
-  voiceForLang: "Voice for language",
-  voiceCs: "Czech voice",
-  voiceEn: "English voice",
-  voiceSegHint: "Each language has its own voice. The CZ / EN switch at the top changes the language of the phrases and the speech.",
   engine: "Voice type",
   engineLocal: "Natural (Supertonic / Kokoro / Piper, offline)",
   engineWindows: "Windows voice (offline)",
@@ -137,9 +149,16 @@ const UI_EN = {
   effectRadio: "Radio",
   pronH: "Pronunciation",
   pronHint: "If the voice says a word wrong, write it here the way it should sound. One word per line: <b>written = spoken</b>. Buttons and the text box keep the correct spelling.",
-  pronCs: "Czech",
-  pronEn: "English",
-  lookH: "Controls and appearance",
+  pronLang: "Dictionary for",
+  synthSteps: "Voice quality",
+  stepsAuto: "Automatic (depends on the device)",
+  stepsHigh: "Highest (slower)",
+  stepsMid: "Balanced",
+  stepsFast: "Fastest",
+  synthStepsHint: "Shortens the wait for the voice on a slower phone. Applies to the Supertonic voice.",
+  langH: "Language",
+  controlsH: "Controls",
+  lookH: "Appearance",
   uiLanguage: "App language (Jazyk aplikace)",
   fontSize: "Font size",
   fontM: "Medium",
@@ -155,15 +174,17 @@ const UI_EN = {
   coral: "Coral",
   purple: "Purple",
   flipUi: "Flip UI: Speak button on the right, phrases aligned to the right",
-  showLanguageSwitch: "Show the CZ / EN switch in the top bar",
+  showLanguageSwitch: "Show the language picker in the top bar",
   speechLangHere: "Speech and phrase language",
+  translateTo: "Show a translation under each phrase into",
+  translateHint: "When you speak another language, each phrase shows what it means. Handy with nurses who speak another language, when travelling, or for learning.",
   enterSpeaks: "Enter speaks the text (new line: Shift+Enter)",
   clearAfterSpeak: "Clear the text box after speaking",
   lockSettings: "Lock settings and phrase editing behind a sum (for caregivers)",
   volumeKeySpeaks: "The volume down button speaks the text",
   phrasesH: "Phrases and history",
   clearHistory: "Clear history",
-  offline: "Vox runs fully offline: no text or sound is ever sent anywhere.",
+  offline: "Speeka runs fully offline: no text or sound is ever sent anywhere.",
   aboutH: "About",
   author: "Author: Martin Sedrmajer",
   license: "Free software under the GPL-3.0 license:",
@@ -171,7 +192,7 @@ const UI_EN = {
   saveSettings: "Save settings",
   inCzech: "Czech",
   inEnglish: "English",
-  dlgHint: "The button shows and speaks the version in the language that is switched on. If one is missing, the other one is used.",
+  dlgHint: "The button shows and speaks the version in the language that is switched on. If it is missing, English (or Czech) is used.",
   urgent: "Urgent (bright red button)",
   nameCs: "Name in Czech",
   nameEn: "Name in English",
@@ -216,9 +237,11 @@ function haptic() {
   if (state.platform === "android") send({ type: "haptic" });
 }
 
-// Každé stisknuté tlačítko krátce zavibruje.
-document.addEventListener("pointerdown", (e) => {
-  if (e.button === 0 && e.target.closest("button, select, input[type=checkbox], input[type=radio]")) haptic();
+// Každé stisknuté tlačítko krátce zavibruje – až při skutečném klepnutí (click), ne při posouvání prstem.
+// Po dokončeném podržení už zavibrovalo podržení, druhý pulz při puštění se vynechá.
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("button, select, input[type=checkbox], input[type=radio]");
+  if (el && !el.dataset.held) haptic();
 }, true);
 
 if (webview2) {
@@ -235,6 +258,7 @@ function onMessage(msg) {
       state.windowsVoices = msg.windowsVoices || [];
       state.voicesDir = msg.voicesDir || "";
       state.version = msg.version || "";
+      if (Array.isArray(msg.languages) && msg.languages.length) state.languages = msg.languages;
       applyPlatform(msg.platform || "windows");
       applyLook();
       renderAll();
@@ -280,8 +304,13 @@ function onMessage(msg) {
       enqueueAudio(msg);
       break;
 
+    case "speak.skip":   // v textu byly jen smajlíky – není co říct
+      setPreparing(false);
+      break;
+
     case "speak.error":
       if (msg.id === currentSpeech) currentSpeech = null;
+      setPreparing(false);
       toast(t("voiceError", msg.message));
       setSpeaking(!!playing);
       break;
@@ -304,40 +333,90 @@ function applyLook() {
   document.body.classList.add("fs-" + (s.fontSize || "l"));
   document.body.classList.toggle("light", s.theme === "light");
   document.body.classList.toggle("flipped", !!s.flipUi);
-  $("langTop").hidden = s.showLanguageSwitch === false;
+  $("langTopWrap").hidden = s.showLanguageSwitch === false;
   document.body.dataset.accent = s.accent || "blue";
-  document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang()));
+  renderLanguagePickers();
   $("text").lang = lang();
-  $("text").placeholder = t(lang() === "cs" ? "placeholderCs" : "placeholderEn");
+  $("text").placeholder = t("placeholder", langName(lang()));
   applyUi();
 }
 
-// Když je přepínač CZ / EN v liště schovaný, je k dispozici v Nastavení hned pod volbou.
-$("showLanguageSwitch").addEventListener("change", () => {
-  $("langSettingsRow").hidden = $("showLanguageSwitch").checked;
-});
+// Výběr jazyka (v liště a v Nastavení): nahoře naposledy použité jazyky, pod čarou ostatní.
+function renderLanguagePickers() {
+  const current = lang();
+  const recent = [current, ...((state.settings && state.settings.recentLanguages) || [])]
+    .filter((c, i, all) => all.indexOf(c) === i && state.languages.some((l) => l.code === c));
+  const rest = state.languages.map((l) => l.code).filter((c) => !recent.includes(c));
+  for (const sel of document.querySelectorAll("select.lang-select")) {
+    sel.textContent = "";
+    for (const code of recent) sel.add(langOption(code));
+    if (rest.length) {
+      const line = new Option("──────────", "");
+      line.disabled = true;
+      sel.add(line);
+      for (const code of rest) sel.add(langOption(code));
+    }
+    sel.value = current;
+  }
+  $("langTopShort").textContent = langInfo(current).short;
+}
 
-// Přepínač CZ / EN (v liště i v Nastavení): mění jazyk frází a hlas, kterým se mluví (ovládání ne – to je jazyk aplikace).
-document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => {
-  if (!state.settings || b.dataset.lang === lang()) return;
-  state.settings.language = b.dataset.lang;
-  applyLook();
-  renderAll();
-  send({ type: "language.set", lang: b.dataset.lang });
-}));
+function langOption(code) {
+  const l = langInfo(code);
+  return new Option(l.short + " · " + l.native, code);
+}
+
+// Výběr jazyka (v liště i v Nastavení): mění jazyk frází a hlas, kterým se mluví (ovládání ne – to je jazyk aplikace).
+for (const sel of document.querySelectorAll("select.lang-select")) {
+  sel.addEventListener("change", () => {
+    const code = sel.value;
+    if (!state.settings || !code || code === lang()) return;
+    state.settings.language = code;
+    state.settings.recentLanguages = [code, ...(state.settings.recentLanguages || []).filter((c) => c !== code)];
+    applyLook();
+    renderAll();
+    send({ type: "language.set", lang: code });
+  });
+}
+
+// Text ve zvoleném jazyce: čeština a angličtina mají vlastní pole, ostatní jazyky slovník.
+function ownText(cs, en, others, code) {
+  return (code === "cs" ? cs : code === "en" ? en : (others || {})[code]) || "";
+}
+
+// Když v zapnutém jazyce chybí, použije se angličtina, pak čeština, pak cokoli.
+function pickText(cs, en, others) {
+  const own = ownText(cs, en, others, lang());
+  if (own) return own;
+  if (en) return en;
+  if (cs) return cs;
+  const any = Object.values(others || {}).find((v) => v);
+  return any || "";
+}
 
 function catName(c) {
-  return (lang() === "en" ? c.nameEn || c.name : c.name || c.nameEn) || t("untitled");
+  return pickText(c.name, c.nameEn, c.names) || t("untitled");
 }
 
-// Znění fráze v zapnutém jazyce; když chybí, použije se druhé.
 function phraseText(p) {
-  return lang() === "en" ? p.text || p.label : p.label || p.text;
+  return pickText(p.label, p.text, p.translations);
 }
 
+// Překlad pod frází do jazyka z Nastavení – jen když se mluví jiným jazykem a překlad existuje.
+function phraseTranslation(p) {
+  const tl = state.settings && state.settings.translationLanguage;
+  if (!tl || tl === lang()) return null;
+  const v = ownText(p.label, p.text, p.translations, tl);
+  return v && v !== phraseText(p) ? v : null;
+}
+
+// Při úpravě frází druhý řádek na dlaždici: znění pro kontrolu (česky, nebo anglicky u češtiny),
+// případně upozornění, že v zapnutém jazyce znění chybí.
 function phraseOther(p) {
-  const other = lang() === "en" ? p.label : p.text;
-  return other && other !== phraseText(p) ? other : null;
+  const l = lang();
+  if (!ownText(p.label, p.text, p.translations, l)) return t("missingLang", langName(l));
+  const ref = l === "cs" ? p.text : p.label || p.text;
+  return ref && ref !== phraseText(p) ? ref : null;
 }
 
 function setVoiceStatus(kind, text) {
@@ -351,13 +430,31 @@ function setVoiceStatus(kind, text) {
 // remember = false: zopakování z historie – pořadí se nemění, ať tlačítka neuhýbají pod prstem.
 function speak(text, remember = true) {
   text = (text || "").trim();
-  if (!text) return;
+  if (!text || preparing) return;   // hlas se teprve připravuje – druhé klepnutí by ho zbytečně restartovalo
+  setPreparing(true);
   send({ type: "speak", text, remember });
+}
+
+// Mezi klepnutím a prvním zvukem: kolečko na tlačítku Říct, další klepnutí se ignorují.
+let preparing = false;
+let preparingTimer = null;
+function setPreparing(on) {
+  preparing = on;
+  document.body.classList.toggle("preparing", on);
+  $("btnSpeak").setAttribute("aria-busy", on ? "true" : "false");
+  clearTimeout(preparingTimer);
+  if (on) {
+    $("btnStopTop").hidden = false;
+    preparingTimer = setTimeout(() => setPreparing(false), 30000);   // pojistka, kdyby odpověď nepřišla
+  } else if (!document.body.classList.contains("speaking")) {
+    $("btnStopTop").hidden = true;
+  }
 }
 
 function speakComposer() {
   const t = $("text").value.trim();
   if (!t) { $("text").focus(); return; }
+  if (preparing) return;
   speak(t);
   if (state.settings.clearAfterSpeak) $("text").value = "";
   $("text").focus();
@@ -367,6 +464,7 @@ function stopAll() {
   send({ type: "stop" });
   currentSpeech = null;
   stopAudio();
+  setPreparing(false);
 }
 
 $("btnSpeak").addEventListener("click", speakComposer);
@@ -467,6 +565,8 @@ $("cats").addEventListener("wheel", (e) => {
 function renderBoard() {
   const board = $("board");
   board.innerHTML = "";
+  // historie se neupravuje – tlačítko úprav by tam jen zabíralo místo
+  $("btnEdit").hidden = state.activeCat === "history";
 
   if (state.activeCat === "history") {
     $("boardTitle").textContent = t("historyTitle");
@@ -494,7 +594,7 @@ function renderBoard() {
 
   cat.phrases.forEach((p, index) => {
     // při úpravě je vidět i druhý jazyk, ať je hned poznat, kde překlad chybí
-    const b = tile(phraseText(p), state.editing ? phraseOther(p) || t(lang() === "en" ? "missingCs" : "missingEn") : null, p.urgent);
+    const b = tile(phraseText(p), state.editing ? phraseOther(p) : phraseTranslation(p), p.urgent);
     onTilePress(b,
       () => { if (state.editing) openPhraseDialog(cat, index); else speak(phraseText(p)); },
       () => { if (!state.editing) insertIntoComposer(phraseText(p)); });
@@ -528,10 +628,12 @@ function onTilePress(button, onTap, onHold) {
   button.addEventListener("pointerdown", (e) => {
     if (e.button !== 0) return;
     held = false;
+    delete button.dataset.held;
     button.classList.add("holding");
     timer = setTimeout(() => {
       timer = null;
       held = true;
+      button.dataset.held = "1";
       button.classList.remove("holding");
       haptic();   // podržení je dokončené
       onHold();
@@ -541,6 +643,7 @@ function onTilePress(button, onTap, onHold) {
   button.addEventListener("pointerleave", cancel);
   button.addEventListener("pointercancel", cancel);
   button.addEventListener("click", (e) => {
+    delete button.dataset.held;
     if (held) { held = false; e.preventDefault(); return; }   // podržení už vložilo text
     onTap();
   });
@@ -551,7 +654,7 @@ function onTilePress(button, onTap, onHold) {
     const touchHold = timer !== null && e.pointerType !== "mouse";
     cancel();
     held = touchHold;   // na telefonu by po podržení přišel ještě click
-    if (touchHold) haptic();
+    if (touchHold) { button.dataset.held = "1"; haptic(); }
     onHold();
   });
 }
@@ -620,11 +723,11 @@ function emptyNote(text) {
   return p;
 }
 
-$("btnEdit").addEventListener("click", () => {
-  // do úprav jen přes zámek; z úprav ven vždycky
-  if (!state.editing) { requireUnlock(toggleEditing); return; }
-  toggleEditing();
-});
+// Do úprav frází se vstupuje podržením (ať se to nestane omylem), ven jedním klepnutím.
+// Úpravy chrání i zámek pro pečovatele.
+onTilePress($("btnEdit"),
+  () => { if (state.editing) toggleEditing(); else toast(t("holdToEdit")); },
+  () => { if (state.editing) toggleEditing(); else requireUnlock(toggleEditing); });
 
 function toggleEditing() {
   state.editing = !state.editing;
@@ -655,6 +758,14 @@ function openPhraseDialog(cat, index) {
   $("dlgCategory").hidden = true;
   $("dlgLabel").value = p.label || "";
   $("dlgText").value = p.text || "";
+  // třetí pole pro zapnutý jazyk, když to není čeština ani angličtina
+  const other = lang() !== "cs" && lang() !== "en" ? lang() : null;
+  $("dlgOtherWrap").hidden = !other;
+  if (other) {
+    $("dlgOtherLabel").textContent = t("inLang", langInfo(other).native);
+    $("dlgOther").lang = other;
+    $("dlgOther").value = (p.translations || {})[other] || "";
+  }
   $("dlgUrgent").checked = !!p.urgent;
   $("dlgDelete").hidden = index < 0;
 
@@ -664,15 +775,20 @@ function openPhraseDialog(cat, index) {
     } else {
       const label = $("dlgLabel").value.trim();
       const text = $("dlgText").value.trim();
-      if (!label && !text) { toast(t("fillPhrase")); return false; }
-      const item = { label, text, urgent: $("dlgUrgent").checked };
+      const translations = { ...(p.translations || {}) };   // překlady do jiných jazyků zůstanou
+      if (other) {
+        const v = $("dlgOther").value.trim();
+        if (v) translations[other] = v; else delete translations[other];
+      }
+      if (!label && !text && !Object.keys(translations).length) { toast(t("fillPhrase")); return false; }
+      const item = { label, text, translations, urgent: $("dlgUrgent").checked };
       if (index >= 0) cat.phrases[index] = item; else cat.phrases.push(item);
     }
     savePhrases();
     renderBoard();
     return true;
   };
-  openDialog(lang() === "en" ? $("dlgText") : $("dlgLabel"));
+  openDialog(other ? $("dlgOther") : lang() === "en" ? $("dlgText") : $("dlgLabel"));
 }
 
 function openCategoryDialog(cat) {
@@ -681,6 +797,13 @@ function openCategoryDialog(cat) {
   $("dlgCategory").hidden = false;
   $("dlgCatName").value = cat ? cat.name : "";
   $("dlgCatNameEn").value = cat ? cat.nameEn || "" : "";
+  const other = lang() !== "cs" && lang() !== "en" ? lang() : null;
+  $("dlgCatOtherWrap").hidden = !other;
+  if (other) {
+    $("dlgCatOtherLabel").textContent = t("inLang", langInfo(other).native);
+    $("dlgCatOther").lang = other;
+    $("dlgCatOther").value = cat ? (cat.names || {})[other] || "" : "";
+  }
   $("dlgDelete").hidden = !cat;
 
   dialogAction = (what) => {
@@ -696,10 +819,15 @@ function openCategoryDialog(cat) {
     } else {
       const name = $("dlgCatName").value.trim();
       const nameEn = $("dlgCatNameEn").value.trim();
-      if (!name && !nameEn) { toast(t("fillGroup")); return false; }
-      if (cat) { cat.name = name; cat.nameEn = nameEn; }
+      const names = { ...((cat && cat.names) || {}) };
+      if (other) {
+        const v = $("dlgCatOther").value.trim();
+        if (v) names[other] = v; else delete names[other];
+      }
+      if (!name && !nameEn && !Object.keys(names).length) { toast(t("fillGroup")); return false; }
+      if (cat) { cat.name = name; cat.nameEn = nameEn; cat.names = names; }
       else {
-        const created = { id: Math.random().toString(16).slice(2) + Date.now().toString(16), name, nameEn, phrases: [] };
+        const created = { id: Math.random().toString(16).slice(2) + Date.now().toString(16), name, nameEn, names, phrases: [] };
         cats.push(created);
         state.activeCat = created.id;
       }
@@ -708,7 +836,7 @@ function openCategoryDialog(cat) {
     renderAll();
     return true;
   };
-  openDialog($("dlgCatName"));
+  openDialog(other ? $("dlgCatOther") : $("dlgCatName"));
 }
 
 let confirmDelete = false;
@@ -840,8 +968,16 @@ $("scrim").addEventListener("click", closeDrawer);
 
 function fillSettingsForm(s) {
   state.draftVoices = { en: { ...s.voice }, cs: { ...s.voiceCs } };
-  state.formLang = s.language === "cs" ? "cs" : "en";
-  loadVoiceFields(state.draftVoices[state.formLang]);
+  state.formLang = "en";
+  loadVoiceFields(state.draftVoices.en);
+
+  // slovník výslovnosti: jedno okno, ve výchozím stavu pro jazyk, kterým se zrovna mluví
+  state.draftPron = { ...(s.pronunciations || {}) };
+  const pl = $("pronLang");
+  pl.textContent = "";
+  for (const l of state.languages) pl.add(new Option(l.native, l.code));
+  pl.value = lang();
+  loadPron();
 
   $("pitch").value = s.pitch || 1;
   $("volume").value = s.volume ?? 1;
@@ -851,11 +987,14 @@ function fillSettingsForm(s) {
   $("fontSize").value = s.fontSize || "l";
   $("theme").value = s.theme || "dark";
   $("accent").value = s.accent || "blue";
-  $("pronCs").value = s.pronunciationCs || "";
-  $("pronEn").value = s.pronunciationEn || "";
   $("flipUi").checked = !!s.flipUi;
   $("showLanguageSwitch").checked = s.showLanguageSwitch !== false;
-  $("langSettingsRow").hidden = $("showLanguageSwitch").checked;
+  const tr = $("translateTo");
+  tr.textContent = "";
+  tr.add(new Option(t("noTranslation"), ""));
+  for (const l of state.languages) tr.add(new Option(l.native, l.code));
+  tr.value = s.translationLanguage || "";
+  $("synthSteps").value = String([3, 5, 8].includes(s.synthesisSteps) ? s.synthesisSteps : 0);
   $("enterSpeaks").checked = s.enterSpeaks !== false;
   $("clearAfterSpeak").checked = s.clearAfterSpeak !== false;
   $("lockSettings").checked = !!s.lockSettings;
@@ -869,7 +1008,6 @@ function fillSettingsForm(s) {
 
 // Pole hlasu v nastavení patří vždy jednomu jazyku (přepínač „Hlas pro češtinu / angličtinu“).
 function loadVoiceFields(v) {
-  document.querySelectorAll(".seg button").forEach((b) => b.classList.toggle("active", b.dataset.vl === state.formLang));
   $("engine").value = v.engine || "local";
 
   const vd = $("voiceDir");
@@ -912,12 +1050,19 @@ function readVoiceFields() {
   };
 }
 
-document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
-  if (b.dataset.vl === state.formLang) return;
-  state.draftVoices[state.formLang] = readVoiceFields();
-  state.formLang = b.dataset.vl;
-  loadVoiceFields(state.draftVoices[state.formLang]);
-}));
+// Slovník výslovnosti: přepnutí jazyka uloží rozepsaný slovník a načte jiný.
+function loadPron() {
+  const code = $("pronLang").value;
+  $("pron").value = state.draftPron[code] || "";
+  $("pron").lang = code;
+  $("pron").placeholder = code === "cs" ? "včera = v čera\nshledanou = schledanou" : t("pronPlaceholder");
+  state.pronShown = code;
+}
+
+$("pronLang").addEventListener("change", () => {
+  if (state.pronShown) state.draftPron[state.pronShown] = $("pron").value;
+  loadPron();
+});
 
 // Varování, když hlas neumí jazyk, pro který je nastavený (Kokoro česky, český Piper anglicky).
 function updateLangWarn() {
@@ -925,9 +1070,7 @@ function updateLangWarn() {
   let text = "";
   if ($("engine").value === "local") {
     const voice = state.voices.find((x) => x.dir === $("voiceDir").value);
-    if (voice && voice.lang && voice.lang !== state.formLang) {
-      text = state.formLang === "cs" ? t("warnNotCzech") : t("warnLang", voice.lang.toUpperCase());
-    }
+    if (voice && voice.lang) text = t("warnSingleLang", voice.lang.toUpperCase());
   }
   el.textContent = text;
   el.hidden = !text;
@@ -1000,21 +1143,24 @@ function collectSettings() {
   s.fontSize = $("fontSize").value;
   s.theme = $("theme").value;
   s.accent = $("accent").value;
-  s.pronunciationCs = $("pronCs").value;
-  s.pronunciationEn = $("pronEn").value;
+  if (state.pronShown) state.draftPron[state.pronShown] = $("pron").value;
+  s.pronunciations = {};
+  for (const [code, text] of Object.entries(state.draftPron)) if (text && text.trim()) s.pronunciations[code] = text;
   s.enterSpeaks = $("enterSpeaks").checked;
   s.clearAfterSpeak = $("clearAfterSpeak").checked;
   s.lockSettings = $("lockSettings").checked;
   s.volumeKeySpeaks = $("volumeKeySpeaks").checked;
   s.flipUi = $("flipUi").checked;
   s.showLanguageSwitch = $("showLanguageSwitch").checked;
+  s.translationLanguage = $("translateTo").value;
+  s.synthesisSteps = Number($("synthSteps").value) || 0;
   s.uiLanguage = $("uiLanguage").value;
   return s;
 }
 
 $("btnTest").addEventListener("click", () => {
   if (!drawerOpen()) return;
-  send({ type: "test", settings: collectSettings(), lang: state.formLang });
+  send({ type: "test", settings: collectSettings(), lang: lang() });   // zkouška mluví zapnutým jazykem
 });
 $("btnSaveSettings").addEventListener("click", () => {
   if (!drawerOpen()) return;
@@ -1056,7 +1202,8 @@ function enqueueAudio(item) {
 
 function setSpeaking(on) {
   document.body.classList.toggle("speaking", on);
-  $("btnStopTop").hidden = !on;
+  if (on) setPreparing(false);   // první zvuk hraje – připravování skončilo
+  $("btnStopTop").hidden = !on && !preparing;
 }
 
 function b64ToBuffer(b64) {

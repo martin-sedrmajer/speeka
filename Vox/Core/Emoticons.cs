@@ -33,7 +33,7 @@ public static class Emoticons
     /// <summary>Text upravený pro hlas. Může vyjít prázdný, když obsahoval jen smajlíky.</summary>
     public static string Speakable(string text, string lang)
     {
-        var laugh = lang == "cs" ? "hehehe" : "hahaha";
+        var laugh = Languages.Get(lang).Laugh;   // hehehe, hahaha, jajaja…
         text = Laugh.Replace(text, " " + laugh + " ");
         text = Other.Replace(text, "");
         text = Emoji.Replace(text, "");

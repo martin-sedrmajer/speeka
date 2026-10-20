@@ -58,23 +58,22 @@ public sealed class Bridge : IDisposable
                 case "test":
                     // vyzkoušení hlasu z rozpracovaného nastavení – nic se neukládá
                     var draft = msg?["settings"]?.Deserialize<AppSettings>(SettingsStore.Json);
-                    var testLang = Str(msg?["lang"]) == "cs" ? "cs" : "en";
+                    var testLang = Str(msg?["lang"]);
+                    if (!Languages.IsSupported(testLang)) testLang = "en";
                     if (draft != null)
-                        await SpeakAsync(testLang == "cs"
-                            ? "Dobrý den, takto zní můj hlas."
-                            : "Hello, this is how I sound.", draft, testLang);
+                        await SpeakAsync(Languages.Get(testLang).Test, draft, testLang!);
                     break;
 
                 case "language.set":
-                    var lang = Str(msg?["lang"]) == "cs" ? "cs" : "en";
+                    var lang = Str(msg?["lang"]);
+                    if (lang == null || !Languages.IsSupported(lang)) break;
                     var ls = _settings.Current;
-                    if (ls.Language != lang)
-                    {
-                        ls.Language = lang;
-                        _settings.Save(ls);
-                        Post(new { type = "settings", settings = _settings.Current });
-                        _ = WarmUpAsync(_settings.Current);
-                    }
+                    var changed = ls.Language != lang;
+                    ls.Language = lang;
+                    ls.RecentLanguages = Languages.Touch(ls.RecentLanguages, lang);   // výběr jazyka řadí naposledy použité nahoru
+                    _settings.Save(ls);
+                    Post(new { type = "settings", settings = _settings.Current });
+                    if (changed) _ = WarmUpAsync(_settings.Current);
                     break;
 
                 case "stop":
@@ -145,9 +144,13 @@ public sealed class Bridge : IDisposable
     private async Task SpeakAsync(string text, AppSettings s, string lang)
     {
         // vlastní výslovnost ze slovníku, pak smajlíky (slovník tak může smajlík vyslovit po svém)
-        text = ApplyPronunciation(text, lang == "cs" ? s.PronunciationCs : s.PronunciationEn);
+        text = ApplyPronunciation(text, s.Pronunciations.GetValueOrDefault(lang));
         text = Emoticons.Speakable(text, lang);
-        if (text.Length == 0) return;   // byly tam jen smajlíky
+        if (text.Length == 0)   // byly tam jen smajlíky
+        {
+            Post(new { type = "speak.skip" });
+            return;
+        }
 
         var cts = new CancellationTokenSource();
         Interlocked.Exchange(ref _speakCts, cts)?.Cancel();
@@ -177,7 +180,7 @@ public sealed class Bridge : IDisposable
 
     private byte[] Synthesize(string text, AppSettings s, string lang)
     {
-        var v = s.VoiceFor(lang);
+        var v = SpeechVoice(s, lang);
         if (v.Engine == "windows") return _platform.SynthesizeSystem(text, v);
 
         // Výšku dělá stránka zrychleným přehráním; aby se nezměnilo i tempo, syntéza mluví o to pomaleji.
@@ -190,8 +193,38 @@ public sealed class Bridge : IDisposable
             PiperNoiseScale = v.PiperNoiseScale,
             PiperNoiseW = v.PiperNoiseW
         };
+        _piper.SupertonicSteps = s.SynthesisSteps > 0 ? s.SynthesisSteps : _platform.DefaultSynthesisSteps;
         return _piper.Synthesize(text, local, lang);
     }
+
+    /// <summary>
+    /// Hlas, kterým se mluví daným jazykem. Nastavení je jedno pro všechny jazyky. Vícejazyčný
+    /// Supertonic a hlasy Windows (vybrané uživatelem) mluví vším; jednojazyčný hlas (Kokoro, Piper)
+    /// jen svým jazykem – ostatní jazyky by přečetl špatně, a tak za něj mluví přibalený Supertonic
+    /// se stejnou rychlostí.
+    /// </summary>
+    private VoiceSettings SpeechVoice(AppSettings s, string lang)
+    {
+        var v = s.Voice;
+        if (v.Engine == "windows" || IsSupertonicVoice(v)) return v;
+        var voiceLang = PiperTts.ResolveDir(v.PiperModelDir) is { } dir ? PiperTts.LanguageOf(dir) : null;
+        if (voiceLang == null || voiceLang == lang) return v;
+        var supertonic = SupertonicDir();
+        return supertonic == null ? v : new VoiceSettings
+        {
+            Engine = "local",
+            PiperModelDir = supertonic,
+            PiperSpeaker = PiperTts.SupertonicDefaultSpeaker,
+            PiperSpeed = v.PiperSpeed
+        };
+    }
+
+    private static bool IsSupertonicVoice(VoiceSettings v) =>
+        v.Engine == "local" && PiperTts.ResolveDir(v.PiperModelDir) is { } dir && PiperTts.IsSupertonic(dir);
+
+    private string? _supertonicDir;
+    private string? SupertonicDir() =>
+        _supertonicDir ??= PiperTts.ListVoices().FirstOrDefault(v => PiperTts.IsSupertonic(v.Dir)).Dir;
 
     /// <summary>
     /// Nahradí celá slova podle slovníku výslovnosti („napsáno = vysloví se“, jeden řádek na slovo).
@@ -228,11 +261,36 @@ public sealed class Bridge : IDisposable
     /// Rozdělí text na věty (. ! ? … nebo nový řádek). Krátké kousky se spojí s následujícím,
     /// ať hlas nemluví trhaně.
     /// </summary>
+    /// <summary>
+    /// Dlouhou větu rozdělí u čárky, středníku, dvojtečky nebo pomlčky, ať první kus zazní dřív
+    /// (na telefonu se dlouhá věta počítá několik sekund). Krátké kousky spojí dohromady.
+    /// </summary>
+    private static IEnumerable<string> SplitLong(string sentence)
+    {
+        if (sentence.Length <= 70)
+        {
+            yield return sentence;
+            yield break;
+        }
+        var buffer = "";
+        foreach (var piece in Regex.Split(sentence, @"(?<=[,;:–])\s+"))
+        {
+            buffer = buffer.Length == 0 ? piece : buffer + " " + piece;
+            if (buffer.Length >= 25)
+            {
+                yield return buffer;
+                buffer = "";
+            }
+        }
+        if (buffer.Length > 0) yield return buffer;
+    }
+
     public static List<string> SplitSentences(string text)
     {
         var raw = Regex.Split(text.Trim(), @"(?<=[.!?…])\s+|\r?\n+")
             .Select(p => p.Trim())
             .Where(p => p.Length > 0)
+            .SelectMany(SplitLong)
             .ToList();
 
         var parts = new List<string>();
@@ -261,7 +319,7 @@ public sealed class Bridge : IDisposable
         Post(new { type = "voice.status", state = "loading", text = Loc.T("Připravuji hlas…", "Preparing the voice…") });
         try
         {
-            await Task.Run(() => Synthesize(s.Language == "cs" ? "Hotovo." : "Ready.", s, s.Language));
+            await Task.Run(() => Synthesize(Languages.Get(s.Language).Ready, s, s.Language));
             if (version == _warmupVersion)
                 Post(new { type = "voice.status", state = "ready", text = VoiceLabel(s) });
         }
@@ -272,17 +330,18 @@ public sealed class Bridge : IDisposable
         }
     }
 
-    private static string VoiceKey(AppSettings s)
+    private string VoiceKey(AppSettings s)
     {
-        var v = s.VoiceFor(s.Language);
+        var v = SpeechVoice(s, s.Language);
         return FormattableString.Invariant(
             $"{s.Language}|{v.Engine}|{v.PiperModelDir}|{v.PiperSpeaker}|{v.PiperNoiseScale:0.00}|{v.PiperNoiseW:0.00}|{v.WindowsVoice}");
     }
 
-    private static string VoiceLabel(AppSettings s)
+    private string VoiceLabel(AppSettings s)
     {
-        var v = s.VoiceFor(s.Language);
-        var prefix = s.Language == "cs" ? Loc.T("Česky – ", "Czech – ") : Loc.T("Anglicky – ", "English – ");
+        var v = SpeechVoice(s, s.Language);
+        var info = Languages.Get(s.Language);
+        var prefix = Loc.T(char.ToUpperInvariant(info.Cs[0]) + info.Cs[1..], info.En) + " – ";
         if (v.Engine == "windows")
             return prefix + (string.IsNullOrWhiteSpace(v.WindowsVoice) ? Loc.T("hlas Windows (výchozí)", "Windows voice (default)") : v.WindowsVoice);
         var dir = PiperTts.ResolveDir(v.PiperModelDir);
@@ -312,7 +371,7 @@ public sealed class Bridge : IDisposable
         {
             var firstRun = !s.VoiceChosen && !s.VoiceCsChosen;
             s.UiLanguage = Loc.Detect();
-            if (firstRun) s.Language = s.UiLanguage;
+            if (firstRun) s.Language = Languages.Detect();   // řeč podle jazyka systému (slovenština, němčina…)
             _settings.Save(s);
         }
         Loc.Ui = s.UiLanguage;
@@ -356,7 +415,8 @@ public sealed class Bridge : IDisposable
 
         if (supertonic.Dir != null)
         {
-            s.Voice = SupertonicVoice(PiperTts.SupertonicDefaultSpeedEn);
+            // jedna rychlost pro všechny jazyky; v češtině mluví Supertonic pomaleji, tak česky mluvícím trochu víc
+            s.Voice = SupertonicVoice(s.Language == "cs" ? PiperTts.SupertonicDefaultSpeedCs : PiperTts.SupertonicDefaultSpeedEn);
             s.VoiceChosen = true;
             _settings.Save(s);
             return;
@@ -398,7 +458,8 @@ public sealed class Bridge : IDisposable
             windowsVoices = _platform.SystemVoices(),
             voicesDir = _platform.VoicesFolderDisplay,
             version = _platform.AppVersion,
-            platform = _platform.Name
+            platform = _platform.Name,
+            languages = Languages.All.Select(l => new { code = l.Code, @short = l.Short, native = l.Native, cs = l.Cs, en = l.En })
         });
     }
 

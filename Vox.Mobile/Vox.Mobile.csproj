@@ -11,11 +11,11 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
 
-    <ApplicationTitle>Vox</ApplicationTitle>
+    <ApplicationTitle>Speeka</ApplicationTitle>
     <!-- Identifikátor aplikace na Google Play; po prvním vydání už nejde změnit. -->
     <ApplicationId>io.github.martinsedrmajer.vox</ApplicationId>
-    <ApplicationDisplayVersion>0.3.0</ApplicationDisplayVersion>
-    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>0.4.0</ApplicationDisplayVersion>
+    <ApplicationVersion>2</ApplicationVersion>
 
     <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
     <RuntimeIdentifiers>android-arm64;android-x64</RuntimeIdentifiers>
