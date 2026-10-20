@@ -163,7 +163,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true" id="listenIcon"><path d="M8 5v14l11-7z"/></svg>
           <span data-i18n="listen">Poslechnout hlas</span>
         </button>
-        <audio id="sample" preload="none" src="audio/speeka-cs.mp3"></audio>
+        <audio id="sample" preload="none" src="audio/speeka-cs.mp3?v=3"></audio>
       </div>
       <p class="meta" data-i18n="meta">Windows 10 a 11 (64bit) · zdarma · otevřený zdrojový kód · verze pro Android se testuje</p>
 
@@ -279,7 +279,7 @@
     document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
     document.getElementById("shot").src = "img/speeka-" + lang + ".webp";
     stopSample();
-    sample.src = "audio/speeka-" + lang + ".mp3";
+    sample.src = "audio/speeka-" + lang + ".mp3?v=3";   // ?v= při výměně ukázky zvýšit, ať prohlížeče nehrají starou
     try { localStorage.setItem("vox.lang", lang); } catch (_) { /* bez úložiště */ }
   }
 
