@@ -40,13 +40,14 @@ public class MainActivity : MauiAppCompatActivity
 
     private sealed class SystemBarsPadding : Java.Lang.Object, IOnApplyWindowInsetsListener
     {
-        public WindowInsetsCompat OnApplyWindowInsets(Android.Views.View v, WindowInsetsCompat insets)
+        public WindowInsetsCompat? OnApplyWindowInsets(Android.Views.View? v, WindowInsetsCompat? insets)
         {
+            if (v is null || insets is null) return insets;
             var area = insets.GetInsets(
                 WindowInsetsCompat.Type.SystemBars() |
                 WindowInsetsCompat.Type.DisplayCutout() |
                 WindowInsetsCompat.Type.Ime());
-            v.SetPadding(area.Left, area.Top, area.Right, area.Bottom);
+            if (area is not null) v.SetPadding(area.Left, area.Top, area.Right, area.Bottom);
             return WindowInsetsCompat.Consumed;
         }
     }
