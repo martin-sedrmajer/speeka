@@ -2,8 +2,8 @@
 #  - self-contained .NET 8 (uživatel nemusí nic instalovat, stačí WebView2 Runtime z Windows 10/11),
 #  - přibalený hlas Supertonic 3 ve složce voices\supertonic-3,
 #  - licence převzatých částí,
-#  - ZIP v dist\Vox-<verze>-win-x64.zip,
-#  - s přepínačem -Msix navíc balíček pro Microsoft Store: dist\Vox-<verze>-x64.msix
+#  - ZIP v dist\Speeka-<verze>-win-x64.zip,
+#  - s přepínačem -Msix navíc balíček pro Microsoft Store: dist\Speeka-<verze>-x64.msix
 #    (potřebuje Package\StoreIdentity.json s údaji z Partner Center a makeappx.exe z Windows SDK).
 # Spouští se z kořene repozitáře:  powershell -ExecutionPolicy Bypass -File build-portable.ps1 [-Msix]
 
@@ -31,7 +31,7 @@ $modelLicenseUrl = "https://huggingface.co/Supertone/supertonic-3/raw/main/LICEN
 # Spuštěný Vox z dist\Vox drží soubory a nejdou smazat.
 $running = Get-Process Vox -ErrorAction SilentlyContinue |
     Where-Object { $_.Path -and $_.Path.StartsWith($out, [StringComparison]::OrdinalIgnoreCase) }
-if ($running) { throw "Vox ze složky $out ještě běží. Zavři ho a spusť skript znovu." }
+if ($running) { throw "Aplikace (Vox.exe) ze složky $out ještě běží. Zavři ji a spusť skript znovu." }
 
 if (Test-Path $out) { Remove-Item $out -Recurse -Force }
 New-Item -ItemType Directory -Force $cache | Out-Null
@@ -104,7 +104,7 @@ if (Test-Path $license) {
 }
 else { Write-Warning "V kořeni repozitáře chybí LICENSE (licence Voxu)." }
 
-$zip = Join-Path $dist "Vox-$version-$Runtime.zip"
+$zip = Join-Path $dist "Speeka-$version-$Runtime.zip"
 if (Test-Path $zip) { Remove-Item $zip -Force }
 Write-Host "Balím $zip..."
 # Compress-Archive je u velkých souborů (model) velmi pomalý; ZipFile z .NET je řádově rychlejší.
@@ -151,7 +151,7 @@ if (Test-Path $layout) { Remove-Item $layout -Recurse -Force }
 Copy-Item $out $layout -Recurse
 Copy-Item (Join-Path $root "Package\Assets") (Join-Path $layout "Assets") -Recurse
 # obrázky jen pro stránku obchodu (nahrávají se v Partner Center), do balíčku nepatří
-foreach ($storeOnly in "StoreListing-300.png", "StoreBoxArt-1080.png", "StoreLogo-71.png") {
+foreach ($storeOnly in "StoreListing-300.png", "StoreBoxArt-1080.png", "StoreBoxArt-1080-en.png", "StoreLogo-71.png") {
     Remove-Item (Join-Path $layout "Assets\$storeOnly") -ErrorAction SilentlyContinue
 }
 
@@ -164,7 +164,7 @@ $manifest = $manifest.Replace("{{DISPLAY_NAME}}", (& $esc $id.DisplayName))
 $manifest = $manifest.Replace("{{VERSION}}", $msixVersion)
 [IO.File]::WriteAllText((Join-Path $layout "AppxManifest.xml"), $manifest, (New-Object Text.UTF8Encoding $false))
 
-$msixFile = Join-Path $dist "Vox-$version-x64.msix"
+$msixFile = Join-Path $dist "Speeka-$version-x64.msix"
 if (Test-Path $msixFile) { Remove-Item $msixFile -Force }
 Write-Host "Balím MSIX $msixVersion..."
 & $makeAppx pack /d $layout /p $msixFile /o | Out-Null

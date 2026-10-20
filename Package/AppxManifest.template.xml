@@ -28,7 +28,7 @@
     <Application Id="Vox" Executable="Vox.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="{{DISPLAY_NAME}}"
-        Description="Vox speaks for people who can't: type or tap, and it speaks in a natural Czech or English voice. Fully offline."
+        Description="Speeka speaks for you: type or tap a phrase and it says it aloud in a natural voice, in ten languages. Fully offline."
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

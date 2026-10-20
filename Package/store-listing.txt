@@ -1,115 +1,127 @@
-﻿VOX - TEXTY PRO STRÁNKU V MICROSOFT STORE
+﻿SPEEKA - TEXTY PRO STRÁNKU V MICROSOFT STORE
 (kopírovat do Partner Center -> Store listings,
 zvlášť čeština a angličtina)
+
+Název produktu (Product name): Speeka
+(v každém jazyce vybrat rezervovaný název Speeka)
 
 
 === ČEŠTINA ===
 
 Krátký popis
 ------------
-Vox mluví za vás. Napíšete nebo klepnete na frázi
-a Vox to řekne přirozeným hlasem, česky i anglicky.
-Bez internetu, bez účtu, zdarma.
+Mluví za vás: napište nebo klepněte na frázi
+a Speeka to řekne přirozeným hlasem.
+Offline, zdarma, v deseti jazycích.
 
 Popis
 -----
-Vox je bezplatná pomůcka pro lidi, kteří umějí číst
-a psát, ale nemohou mluvit: po mozkové mrtvici,
-s ALS, po operaci hrtanu nebo dočasně po zákroku.
+Speeka mluví za vás. Napíšete, co chcete říct,
+nebo klepnete na připravenou frázi, a Speeka
+to řekne přirozeným hlasem.
 
-Napíšete, co chcete říct, nebo klepnete na připravenou
-frázi, a Vox to řekne přirozeným hlasem. Jedním
-klepnutím přepnete mezi češtinou a angličtinou,
-hodí se to třeba v nemocnici v zahraničí.
+Hodí se každému, kdo umí psát, ale nemůže
+mluvit, ať už natrvalo, nebo jen na čas:
+po operaci hrtanu, po mrtvici, s ALS,
+při ztrátě hlasu nebo třeba v zahraniční
+nemocnici, kde vám nikdo nerozumí.
 
-Vox běží celý offline. Nemá účty, nic nesleduje
-a nic z toho, co napíšete, neodchází z počítače.
+Speeka běží celá offline. Nemá účty, nic
+nesleduje a nic z toho, co napíšete,
+neodchází z počítače.
 
-Vox je otevřený software (GPL-3.0):
+Speeka je otevřený software (GPL-3.0):
 https://github.com/martin-sedrmajer/vox-aac
 
 Funkce (každá zvlášť do pole Features)
 -------
-Přirozený neuronový hlas, česky i anglicky stejným hlasem
+Přirozený neuronový hlas
+Deset jazyků: čeština, angličtina, slovenština, polština, němčina, španělština, francouzština, italština, ukrajinština, ruština
+Překlad pod frází do vašeho jazyka
 Připravené fráze ve skupinách, naléhavé fráze červeně
 Vlastní fráze a skupiny
 Historie řečených vět, opakování jedním klepnutím
-Hlasitost až 200 %, vyrovnání hlasitosti a zvýraznění pro nedoslýchavé
-Slovník výslovnosti pro slova, která hlas říká špatně
+Hlasitost až 200 % a zvýraznění řeči pro nedoslýchavé
+Slovník výslovnosti pro každý jazyk
 Zámek nastavení pro pečovatele
 Velké písmo, tmavý i světlý vzhled s vysokým kontrastem
-Celý offline: žádný účet, žádný cloud, žádné sledování
-Aplikace v češtině nebo angličtině
 
 Klíčová slova (Search terms, max. 7)
 -------------
-AAC, hlas, řeč, afázie, text na řeč, pomůcka, komunikace
+AAC, hlas, řeč, mrtvice, ALS, text na řeč, komunikace
 
-Co je nového ve verzi 0.3.0 (What's new in this version)
+Co je nového ve verzi 0.4.0 (What's new in this version)
 ---------------------------
-- Smajlíky :D a xD Vox vysloví jako smích, ostatní
-  smajlíky a emoji přeskočí.
-- Skupiny frází jsou v jedné posuvné liště,
-  na fráze zbývá víc místa.
-- Delší fráze se do tlačítek vejdou celé.
-- Přepínač CZ / EN jde schovat z horní lišty,
-  pak je v Nastavení.
-- Angličtina má přirozenější výchozí tempo.
+- Nové jméno: Vox je teď Speeka.
+- Deset jazyků řeči a frází, výběr jazyka v horní
+  liště, naposledy použité jazyky nahoře.
+- Volitelný překlad pod frází do vašeho jazyka.
+- Jeden hlas, jedna rychlost a výška pro všechny
+  jazyky; slovník výslovnosti pro každý jazyk zvlášť.
+- Přehlednější nastavení.
+- Volba kvality hlasu (rychlejší výpočet).
+- Kolečko při přípravě hlasu, dvojité klepnutí
+  už nic nezruší.
+- Smajlíky :D a xD se vysloví jako smích.
 
 
 === ENGLISH ===
 
 Short description
 -----------------
-Vox speaks for you. Type or tap a phrase and Vox says
-it out loud in a natural voice, in Czech or English.
-No internet, no account, free.
+Speaks for you: type or tap a phrase and Speeka
+says it out loud in a natural voice.
+Offline, free, in ten languages.
 
 Description
 -----------
-Vox is a free communication aid for people who can
-read and write but can't speak: after a stroke, with
-ALS/MND, after laryngeal surgery, or for a while
-after an operation.
+Speeka speaks for you. Type what you want to say
+or tap a ready-made phrase, and Speeka says it out
+loud in a natural voice.
 
-Type what you want to say or tap a ready-made phrase,
-and Vox says it out loud in a natural voice. One tap
-switches between English and Czech.
+It's for anyone who can write but can't speak, for
+good or just for a while: after throat surgery,
+after a stroke, with ALS/MND, with a lost voice,
+or in a hospital abroad where nobody understands you.
 
-Vox runs fully offline. There are no accounts, no
-tracking, and nothing you type ever leaves your
-computer.
+Speeka runs fully offline. There are no accounts,
+no tracking, and nothing you type ever leaves
+your computer.
 
-Vox is free software (GPL-3.0):
+Speeka is free software (GPL-3.0):
 https://github.com/martin-sedrmajer/vox-aac
 
 Features (one per Features field)
 --------
-Natural neural voice, the same voice in English and Czech
+Natural neural voice
+Ten languages: Czech, English, Slovak, Polish, German, Spanish, French, Italian, Ukrainian, Russian
+A translation under each phrase into your own language
 Ready-made phrases in groups, urgent phrases in red
 Your own phrases and groups
 History of what you said, repeat with one tap
-Volume up to 200 %, level matching and a clarity boost for listeners who are hard of hearing
-Pronunciation dictionary for words the voice gets wrong
+Volume up to 200 % and a clarity boost for listeners who are hard of hearing
+Pronunciation dictionary for each language
 Caregiver lock for settings
 Large text, dark and high-contrast light themes
-Fully offline: no account, no cloud, no tracking
-App in English or Czech
 
 Search terms (max. 7)
 ------------
-AAC, text to speech, speech aid, aphasia, voice, communication, accessibility
+AAC, text to speech, speech aid, stroke, ALS, voice, communication
 
-What's new in version 0.3.0
+What's new in version 0.4.0
 ---------------------------
-- Emoticons: Vox says :D and xD as laughter and skips
-  other emoticons and emoji.
-- Phrase groups sit in a single scrolling bar, leaving
-  more room for phrases.
-- Longer phrases now fit in their buttons.
-- The CZ / EN switch can be hidden from the top bar;
-  it then lives in Settings.
-- English has a more natural default speed.
+- New name: Vox is now Speeka.
+- Ten languages for speech and phrases, a language
+  picker in the top bar, recently used first.
+- Optional translation under each phrase into your
+  own language.
+- One voice, one speed and pitch for all languages;
+  a pronunciation dictionary for each language.
+- Clearer settings.
+- Voice quality option (faster speech on slow PCs).
+- A spinner while the voice is getting ready;
+  a double tap no longer cancels it.
+- Emoticons :D and xD are spoken as laughter.
 
 
 === OSTATNÍ ===
@@ -124,12 +136,13 @@ Podpora (Support contact):
 https://github.com/martin-sedrmajer/vox-aac/issues
 
 Kategorie: Produktivita (Productivity). Ne zdravotní
-kategorie: Vox je komunikační pomůcka, ne zdravotní
+kategorie: Speeka je komunikační pomůcka, ne zdravotní
 aplikace.
 
 Screenshoty (2360 x 1440, PNG):
-Package\Screenshots\vox-cs.png (česká stránka)
-Package\Screenshots\vox-en.png (anglická stránka)
+Package\Screenshots\speeka-cs.png (česky, skupina Zdraví)
+Package\Screenshots\speeka-en.png (anglicky, rozhovor)
+Package\Screenshots\speeka-uk.png (ukrajinsky s českým překladem)
 
 Store logos (volitelné, nahrávají se jen v Partner Center):
 1:1 Box art 1080 x 1080: Package\Assets\StoreBoxArt-1080.png

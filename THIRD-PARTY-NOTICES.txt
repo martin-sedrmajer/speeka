@@ -1,7 +1,7 @@
-﻿Vox - third-party components
-============================
+﻿Speeka - third-party components
+===============================
 
-Vox itself is licensed under GPL-3.0-or-later with an additional permission
+Speeka (formerly Vox) itself is licensed under GPL-3.0-or-later with an additional permission
 for Microsoft Edge WebView2 (see LICENSE and LICENSE-EXCEPTION.txt). It bundles
 or uses the following components. Each remains under its own license; the full
 texts are available at the linked sources.
@@ -36,5 +36,5 @@ Microsoft Edge WebView2 SDK (user interface)
   https://github.com/dotnet/runtime
 
 Optional voices added by the user (Kokoro, Piper and others) are not part of
-Vox and keep their own licenses. Some Piper voices allow non-commercial use
+Speeka and keep their own licenses. Some Piper voices allow non-commercial use
 only.

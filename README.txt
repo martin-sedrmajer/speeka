@@ -1,10 +1,15 @@
-﻿VOX
-===
+﻿SPEEKA (dříve Vox)
+==================
 
 Pomůcka pro lidi, kteří nemohou mluvit: napíšou text
 nebo klepnou na frázi a aplikace ji řekne přirozeným
-hlasem. Běží celá offline, bez AI a bez internetu.
-Samostatný projekt; hlasový kód je převzatý ze Sentinelu.
+hlasem v deseti jazycích. Běží celá offline, bez AI
+a bez internetu. Samostatný projekt; hlasový kód je
+převzatý ze Sentinelu.
+V obchodech a v aplikaci se jmenuje Speeka; v kódu,
+složkách a souborech zůstává původní název Vox
+(Vox.exe, Vox.Mobile, %APPDATA%\Vox, identita balíčku
+MartinSedrmajer.VoxAAC, ApplicationId ...vox).
 
 
 STRUKTURA
@@ -60,8 +65,8 @@ Hledají se ve dvou složkách: voices vedle Vox.exe
 (přibalený Supertonic 3) a %APPDATA%\Vox\voices
 (hlasy, které si uživatel přidá sám). Každý hlas ve
 vlastní podsložce, formát pro sherpa-onnx.
-Přibalený je jen Supertonic: mluví česky i anglicky
-stejným hlasem. Kokoro a Piper fungují dál, ale jen
+Přibalený je jen Supertonic: mluví všemi deseti
+jazyky stejným hlasem. Kokoro a Piper fungují dál, ale jen
 jako vlastní hlasy (nepřibalují se).
 Kokoro: složka obsahuje voices.bin; mluvčí se vybírá
 podle jména (kokoro-en-v0_19 a kokoro-multi-lang-v1_0).
@@ -70,26 +75,43 @@ Supertonic 3: duration_predictor, text_encoder,
 vector_estimator a vocoder (*.onnx, přednost má int8),
 tts.json, unicode_indexer.bin a voice.bin. Umí 31
 jazyků včetně češtiny, jazyk se mu předává podle
-přepínače CZ / EN. Mluvčí F1-F5 (ženy) a M1-M5 (muži).
+zvoleného jazyka řeči. Mluvčí F1-F5 (ženy) a M1-M5 (muži).
 Model: sherpa-onnx-supertonic-3-tts-int8-2026-05-11
 z vydání tts-models projektu sherpa-onnx na GitHubu.
 Licence modelu OpenRAIL-M.
 Windows: hlasy nainstalované v systému (česky
 Microsoft Jakub), robotičtější, ale bez stahování.
-Při prvním spuštění se pro oba jazyky vybere
-Supertonic, mluvčí Muž 2 (M2), rychlost 1,15
-pro češtinu a 1,0 pro angličtinu.
-Bez Supertonicu: čeština Piper cs_CZ nebo hlas
-Windows, angličtina Kokoro (Heart), jiný hlas nebo
-hlas Windows.
+Hlas je jeden pro všechny jazyky (Voice v nastavení;
+VoiceCs zůstává jen ze starších verzí a nepoužívá se):
+jeden mluvčí, jedna rychlost a výška.
+Při prvním spuštění se vybere Supertonic, mluvčí
+Muž 2 (M2), rychlost 1,15, když se mluví česky,
+jinak 1,0. Bez Supertonicu Kokoro (Heart), jiný hlas
+nebo hlas Windows.
+Jednojazyčný hlas (Kokoro, Piper) mluví jen svým
+jazykem; ostatními jazyky mluví přibalený Supertonic
+se stejnou rychlostí (Bridge.SpeechVoice). Hlas
+Windows mluví vším, co uživatel zvolí.
+Kvalita hlasu (Nastavení → Hlas): počet kroků
+výpočtu Supertonicu. Automaticky = 8 ve Windows,
+4 na Androidu; dál Nejvyšší 8, Vyvážená 5,
+Nejrychlejší 3. Méně kroků = rychlejší, o kousek
+méně čistý zvuk.
 Po startu a po změně hlasu se hlas načte dopředu
 (stav v horní liště), aby první věta nečekala.
 
 
 MLUVENÍ
 -------
-Text se dělí na věty; první věta zazní, zatímco se
-další počítají. Nová promluva přeruší předchozí,
+Text se dělí na věty, dlouhé věty (nad 70 znaků) ještě
+u čárek, středníků a pomlček; první kus zazní, zatímco
+se další počítají. Smajlíky: :D, xD a smějící se emoji
+se vysloví jako smích v jazyce řeči (hehehe, hahaha,
+jajaja…), ostatní smajlíky a emoji se vynechají
+(Core\Emoticons.cs).
+Od klepnutí do prvního zvuku je na tlačítku Říct
+kolečko a další klepnutí se ignorují, aby dvojité
+klepnutí promluvu nezrušilo; Zastavit funguje. Nová promluva přeruší předchozí,
 Esc nebo Zastavit mluvení utne.
 Výška hlasu: přehrávání se zrychlí nebo zpomalí
 a syntéza tempo dorovná, takže se mění jen výška.
@@ -109,30 +131,39 @@ nemají.
 JAZYK
 -----
 Dva nezávislé jazyky:
-- Jazyk řeči: přepínač CZ / EN v horní liště mění
-  fráze na tlačítkách, názvy skupin a hlas.
-- Jazyk aplikace (Nastavení → Ovládání a vzhled):
+- Jazyk řeči: deset jazyků (Core\Languages.cs):
+  čeština, angličtina, slovenština, polština,
+  němčina, španělština, francouzština, italština,
+  ukrajinština, ruština. Výběr v horní liště
+  (na telefonu jen zkratka „CZ ▾“) a v Nastavení,
+  naposledy použité jazyky nahoře (RecentLanguages).
+  Mění fráze na tlačítkách, názvy skupin a hlas.
+  Výběr v liště jde v Nastavení schovat.
+- Překlad pod frází (Nastavení → Jazyk): když se
+  mluví jiným jazykem, ukáže se pod frází menším
+  písmem její znění ve zvoleném jazyce (stejné
+  znění se neopakuje).
+- Jazyk aplikace (Nastavení → Jazyk):
   čeština nebo angličtina pro veškeré ovládání,
   hlášky, stav hlasu a názvy mluvčích. Při prvním
   spuštění se vybere podle jazyka Windows (čeština
   i pro slovenštinu, jinak angličtina); na nové
-  instalaci podle něj i jazyk řeči. Texty v C# jsou
+  instalaci se jazyk řeči vybere podle jazyka systému,
+  pokud je mezi podporovanými. Texty v C# jsou
   v Core\Loc.cs (Loc.T), v rozhraní v app.js (MSG,
   UI_EN) a v index.html (atributy data-t).
-Každý jazyk má vlastní hlas (Voice a VoiceCs
-v nastavení). Kokoro česky neumí; pro češtinu
-Supertonic, Piper cs_CZ (jirka) nebo hlas Windows
-Microsoft Jakub.
-Při prvním spuštění se český hlas vybere sám (viz
-Hlasy). Jazyk
-hlasu Piper se pozná podle názvu modelu (cs_CZ-...).
-Nastavení varuje, když hlas neumí zvolený jazyk.
+Jazyk hlasu Piper se pozná podle názvu modelu
+(cs_CZ-...), Kokoro mluví anglicky. Nastavení varuje,
+když zvolený hlas umí jen jeden jazyk.
 
 
 VÝSLOVNOST
 ----------
-Slovník v Nastavení, zvlášť pro češtinu a angličtinu:
-řádky „napsáno = vysloví se“. Před syntézou se celá
+Slovník v Nastavení pro každý jazyk zvlášť
+(Pronunciations; jedno okno a nad ním výběr jazyka,
+výchozí je jazyk, kterým se mluví): řádky
+„napsáno = vysloví se“. Starší PronunciationCs
+a PronunciationEn se při načtení přesunou. Před syntézou se celá
 slova nahradí (bez ohledu na velká písmena); na
 tlačítkách i v poli zůstává správný pravopis.
 Výchozí: včera = v čera (Jirka „včera“ nepřečte)
@@ -143,19 +174,27 @@ nebo „s-h“, správně je „sch“).
 FRÁZE
 -----
 Skupiny frází s velkými tlačítky. Fráze má znění
-česky (Label) a anglicky (Text) a příznak naléhavá
-(červené tlačítko). Na tlačítku je a řekne se znění
-v zapnutém jazyce; když chybí, použije se druhé.
-Skupina má název česky (Name) a anglicky (NameEn).
+česky (Label), anglicky (Text), v dalších jazycích
+(Translations) a příznak naléhavá (červené tlačítko).
+Na tlačítku je a řekne se znění v zapnutém jazyce;
+když chybí, angličtina, pak čeština. Skupina má název
+česky (Name), anglicky (NameEn) a v dalších jazycích
+(Names). Výchozí fráze jsou přeložené do všech deseti
+jazyků (Core\Phrases.cs, pořadí jako Languages.All);
+starším nastavením se překlady k výchozím frázím
+doplní samy. Překlady nekontroloval rodilý mluvčí.
 Výchozí skupiny: Základní, Potřeby, Zdraví, Rozhovor
 a Čas (teď, za minutku, zítra, včera, za týden…).
 Klepnutí na frázi ji řekne. Podržení (asi půl sekundy,
 tlačítko se postupně podbarví) nebo pravé tlačítko myši
 ji jen vloží do pole na místo kurzoru, aby se dala
 upravit nebo doplnit. Platí i pro historii.
-Úprava: tlačítko Upravit fráze, pak klepnout na frázi
+Úprava: tlačítko Upravit fráze se musí podržet
+(klepnutí jen ukáže nápovědu), pak klepnout na frázi
 (úprava, smazání), na Přidat frázi, na název aktivní
 skupiny (přejmenování, smazání) nebo na + Skupina.
+V jiném jazyce než čeština a angličtina má dialog
+třetí pole pro zapnutý jazyk.
 Historie drží posledních 40 řečených textů (dlouhé
 zprávy jsou na tlačítku zkrácené na tři řádky, celý
 text je v bublině po najetí myší). Nový text
@@ -197,7 +236,7 @@ Přenosná verze k vydání: build-portable.ps1
 (PowerShell, z kořene repozitáře). Sestaví Vox jako
 self-contained (bez instalace .NET), přibalí Supertonic
 do voices\supertonic-3, přidá licence a vytvoří
-dist\Vox-<verze>-win-x64.zip. Model vezme
+dist\Speeka-<verze>-win-x64.zip. Model vezme
 z %APPDATA%\Vox\voices (první složka se Supertonicem),
 jinak ho stáhne z vydání tts-models projektu
 sherpa-onnx (mezipaměť dist\cache) a rozbalí přes
@@ -211,7 +250,7 @@ přidat ručně. Uživatel potřebuje jen WebView2 Runtime
 MICROSOFT STORE
 ---------------
 build-portable.ps1 -Msix vyrobí navíc balíček
-dist\Vox-<verze>-x64.msix. Rozložení je stejné jako
+dist\Speeka-<verze>-x64.msix. Rozložení je stejné jako
 v ZIPu (včetně Supertonicu), přidají se ikony
 z Package\Assets a AppxManifest.xml ze šablony
 Package\AppxManifest.template.xml. Identitu balíčku
@@ -263,3 +302,16 @@ do běžícího emulátoru nebo telefonu, s -Release balíček
 maui-android, Android SDK a JDK.
 ApplicationId io.github.martinsedrmajer.vox se po
 prvním vydání na Google Play už nesmí měnit.
+Balíček pro Google Play se podepisuje klíčem pro
+nahrávání (Dokumenty\Vox-podpis\vox-upload.keystore,
+mimo repozitář, alias vox); heslo se zadává při
+sestavení a předává přes proměnnou prostředí.
+Jen na Androidu: odsazení od stavového řádku, výřezu
+kamery a klávesnice (MainActivity, Android 15+ kreslí
+přes celý displej); krátká vibrace při klepnutí
+na tlačítko a po dokončeném podržení (odezva na dotyk
+systému, bez oprávnění); volitelně tlačítko pro
+snížení hlasitosti řekne text z pole. Na telefonu
+jsou dlaždice nižší a výběr jazyka v liště ukazuje
+jen zkratku.
+Aplikace nemá žádná oprávnění (ani k internetu).

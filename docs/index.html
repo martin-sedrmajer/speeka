@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vox – mluví za vás</title>
-<meta name="description" content="Vox je bezplatná aplikace pro Windows, která mluví za lidi, kteří přišli o hlas. Napíšete nebo klepnete a Vox to řekne přirozeným hlasem, česky i anglicky, bez internetu.">
-<meta property="og:title" content="Vox – mluví za vás">
-<meta property="og:description" content="Bezplatná offline aplikace pro Windows: napíšete nebo klepnete a Vox to řekne přirozeným hlasem, česky i anglicky.">
-<meta property="og:image" content="img/vox-cs.webp">
+<title>Speeka – mluví za vás</title>
+<meta name="description" content="Speeka je bezplatná aplikace, která mluví za lidi, kteří nemohou mluvit. Napíšete nebo klepnete a Speeka to řekne přirozeným hlasem v deseti jazycích, bez internetu.">
+<meta property="og:title" content="Speeka – mluví za vás">
+<meta property="og:description" content="Bezplatná offline aplikace: napíšete nebo klepnete a Speeka to řekne přirozeným hlasem v deseti jazycích.">
+<meta property="og:image" content="img/speeka-cs.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%232f8cff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 7h20a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H14l-6 5v-5H6a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3z'/%3E%3Cpath d='M12 12.5v5M16 10.5v9M20 12.5v5'/%3E%3C/svg%3E">
 <style>
   :root {
@@ -132,9 +132,9 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#" aria-label="Vox">
+    <a class="brand" href="#" aria-label="Speeka">
       <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 7h20a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H14l-6 5v-5H6a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3z"/><path d="M12 12.5v5M16 10.5v9M20 12.5v5"/></svg>
-      <span>VOX</span>
+      <span>SPEEKA</span>
     </a>
     <div class="spacer"></div>
     <a class="gh" href="https://github.com/martin-sedrmajer/vox-aac">GitHub</a>
@@ -148,8 +148,8 @@
 <main id="main">
   <div class="hero">
     <div class="wrap">
-      <h1 data-i18n-html="h1">Vox mluví <em>za vás</em>.</h1>
-      <p class="lead" data-i18n="lead">Napíšete, co chcete říct, nebo klepnete na připravenou frázi. Vox to řekne přirozeným hlasem, česky i anglicky. Bez internetu, bez účtu a zdarma.</p>
+      <h1 data-i18n-html="h1">Speeka mluví <em>za vás</em>.</h1>
+      <p class="lead" data-i18n="lead">Napíšete, co chcete říct, nebo klepnete na připravenou frázi. Speeka to řekne přirozeným hlasem, česky, anglicky a v dalších osmi jazycích. Bez internetu, bez účtu a zdarma.</p>
       <div class="cta">
         <a class="btn primary" href="https://apps.microsoft.com/detail/9P6NKBZXT3VX">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7V6a5 5 0 0 1 10 0v1h3l-1 14H5L4 7h3zm2 0h6V6a3 3 0 0 0-6 0v1z"/></svg>
@@ -163,13 +163,13 @@
           <svg viewBox="0 0 24 24" aria-hidden="true" id="listenIcon"><path d="M8 5v14l11-7z"/></svg>
           <span data-i18n="listen">Poslechnout hlas</span>
         </button>
-        <audio id="sample" preload="none" src="audio/vox-cs.mp3"></audio>
+        <audio id="sample" preload="none" src="audio/speeka-cs.mp3"></audio>
       </div>
-      <p class="meta" data-i18n="meta">Windows 10 a 11 (64bit) · zdarma · otevřený zdrojový kód · verze pro Android se plánuje</p>
+      <p class="meta" data-i18n="meta">Windows 10 a 11 (64bit) · zdarma · otevřený zdrojový kód · verze pro Android se testuje</p>
 
       <figure class="shot">
-        <img id="shot" src="img/vox-cs.webp" width="1600" height="976"
-             alt="Okno aplikace Vox: nahoře pole pro text a velké modré tlačítko Říct, pod ním skupiny frází a tlačítka s frázemi, naléhavé červeně." data-i18n-alt="shotAlt">
+        <img id="shot" src="img/speeka-cs.webp" width="1600" height="976"
+             alt="Okno aplikace Speeka: nahoře pole pro text a velké modré tlačítko Říct, pod ním skupiny frází a tlačítka s frázemi, naléhavé červeně." data-i18n-alt="shotAlt">
         <figcaption data-i18n="shotCap">Naléhavé fráze jsou červené, aby byly vidět na první pohled.</figcaption>
       </figure>
     </div>
@@ -177,8 +177,8 @@
 
   <section>
     <div class="wrap">
-      <h2 data-i18n="whoH">Pro koho je Vox</h2>
-      <p class="prose" data-i18n-html="who">Pro lidi, kteří <strong>umějí číst a psát, ale nemohou mluvit</strong>: po mozkové mrtvici, s ALS, po operaci hrtanu nebo dočasně po zákroku. A pro jejich blízké, pečovatele a logopedy, kteří jim chtějí vrátit hlas do rozhovoru.</p>
+      <h2 data-i18n="whoH">Pro koho je Speeka</h2>
+      <p class="prose" data-i18n-html="who">Pro každého, kdo <strong>umí psát, ale nemůže mluvit</strong>, ať už natrvalo, nebo jen na čas: po operaci hrtanu, po mrtvici, s ALS, při ztrátě hlasu nebo v zahraniční nemocnici, kde vám nikdo nerozumí. A pro blízké, pečovatele a logopedy, kteří chtějí vrátit hlas do rozhovoru.</p>
     </div>
   </section>
 
@@ -186,14 +186,14 @@
     <div class="wrap">
       <h2 data-i18n="featH">Co umí</h2>
       <div class="grid">
-        <div class="card"><span class="ico" aria-hidden="true">🗣️</span><h3 data-i18n="f1h">Přirozený hlas</h3><p data-i18n="f1">Neuronový hlas Supertonic, který zní jako člověk, ne jako robot. Česky i anglicky stejným hlasem.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🗣️</span><h3 data-i18n="f1h">Přirozený hlas</h3><p data-i18n="f1">Neuronový hlas Supertonic, který zní jako člověk, ne jako robot. Stejný hlas ve všech jazycích.</p></div>
         <div class="card"><span class="ico" aria-hidden="true">🔘</span><h3 data-i18n="f2h">Připravené fráze</h3><p data-i18n="f2">Ano, ne, děkuji, mám žízeň, zavolejte sestru… Skupiny frází si upravíte podle sebe.</p></div>
-        <div class="card"><span class="ico" aria-hidden="true">🌍</span><h3 data-i18n="f3h">Čeština i angličtina</h3><p data-i18n="f3">Jedním klepnutím se přepnou fráze i hlas. Samotná aplikace je česky nebo anglicky. Hodí se v nemocnici v zahraničí.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🌍</span><h3 data-i18n="f3h">Deset jazyků</h3><p data-i18n="f3">Čeština, angličtina, slovenština, polština, němčina, španělština, francouzština, italština, ukrajinština a ruština. Pod frází může být i překlad do vašeho jazyka, ať víte, co říkáte.</p></div>
         <div class="card"><span class="ico" aria-hidden="true">🔊</span><h3 data-i18n="f4h">Slyšet i v hluku</h3><p data-i18n="f4">Hlasitost až 200 % s ochranou proti přebuzení, vyrovnání hlasitosti a zvýraznění pro nedoslýchavé.</p></div>
         <div class="card"><span class="ico" aria-hidden="true">🕘</span><h3 data-i18n="f5h">Historie</h3><p data-i18n="f5">Co jste řekli, zůstane po ruce. Jedním klepnutím to zopakujete.</p></div>
         <div class="card"><span class="ico" aria-hidden="true">🔒</span><h3 data-i18n="f6h">Zámek pro pečovatele</h3><p data-i18n="f6">Nastavení a úpravy frází lze zamknout jednoduchým příkladem, aby se nic nezměnilo omylem.</p></div>
         <div class="card"><span class="ico" aria-hidden="true">🔍</span><h3 data-i18n="f7h">Velké a čitelné</h3><p data-i18n="f7">Tři velikosti písma, tmavý i světlý vzhled s vysokým kontrastem, velká tlačítka.</p></div>
-        <div class="card"><span class="ico" aria-hidden="true">🛡️</span><h3 data-i18n="f8h">Nic neodchází z počítače</h3><p data-i18n="f8">Vox běží celý offline. Žádný účet, žádný cloud, žádné sledování. Co napíšete, zůstane jen u vás.</p></div>
+        <div class="card"><span class="ico" aria-hidden="true">🛡️</span><h3 data-i18n="f8h">Nic neodchází ze zařízení</h3><p data-i18n="f8">Speeka běží celá offline. Žádný účet, žádný cloud, žádné sledování. Co napíšete, zůstane jen u vás.</p></div>
       </div>
     </div>
   </section>
@@ -202,7 +202,7 @@
     <div class="wrap">
       <h2 data-i18n="startH">Jak začít</h2>
       <ol class="steps">
-        <li><div><h3 data-i18n="s1h">Nainstalujte Vox</h3><p data-i18n="s1">Nejjednodušší je Microsoft Store: instalace jedním kliknutím a aktualizace přijdou samy. Vox pak najdete v nabídce Start.</p></div></li>
+        <li><div><h3 data-i18n="s1h">Nainstalujte Speeku</h3><p data-i18n="s1">Nejjednodušší je Microsoft Store: instalace jedním kliknutím a aktualizace přijdou samy. Speeku pak najdete v nabídce Start.</p></div></li>
         <li><div><h3 data-i18n="s2h">Nebo bez instalace</h3><p data-i18n="s2">Přenosnou verzi stáhnete jako ZIP. Je větší, protože obsahuje i hlas. Pravým tlačítkem na soubor → Extrahovat vše a spusťte Vox.exe. Složku můžete dát kamkoli, třeba na flashdisk.</p></div></li>
         <li><div><h3 data-i18n="s3h">Řekněte první větu</h3><p data-i18n="s3">Napište ji do pole nahoře a zmáčkněte Enter.</p></div></li>
       </ol>
@@ -213,7 +213,7 @@
 
 <footer>
   <div class="wrap">
-    <p data-i18n-html="foot1">Vox je otevřený software pod licencí GPL-3.0. Vytvořil <a href="https://github.com/martin-sedrmajer">Martin Sedrmajer</a>.</p>
+    <p data-i18n-html="foot1">Speeka je otevřený software pod licencí GPL-3.0. Vytvořil <a href="https://github.com/martin-sedrmajer">Martin Sedrmajer</a>.</p>
     <p data-i18n-html="foot2">Zdrojový kód a hlášení chyb: <a href="https://github.com/martin-sedrmajer/vox-aac">github.com/martin-sedrmajer/vox-aac</a></p>
     <p data-i18n="foot3">Hlas: Supertonic 3 od Supertone Inc. (licence OpenRAIL-M), převedený projektem sherpa-onnx.</p>
     <p><a href="privacy.html" data-i18n="foot4">Ochrana soukromí</a></p>
@@ -224,33 +224,33 @@
   // Texty v obou jazycích. Čeština je přímo v HTML (funguje i bez skriptu), angličtina se doplní.
   const T = {
     en: {
-      title: "Vox – speaks for you",
+      title: "Speeka – speaks for you",
       skip: "Skip to content",
-      h1: "Vox speaks <em>for you</em>.",
-      lead: "Type what you want to say or tap a ready-made phrase. Vox says it out loud in a natural voice, in Czech or English. No internet, no account, free.",
+      h1: "Speeka speaks <em>for you</em>.",
+      lead: "Type what you want to say or tap a ready-made phrase. Speeka says it out loud in a natural voice, in English, Czech and eight more languages. No internet, no account, free.",
       store: "Get it from Microsoft Store",
       download: "Portable version (ZIP)",
       listen: "Listen to the voice",
-      meta: "Windows 10 and 11 (64-bit) · free · open source · Android version planned",
-      shotAlt: "The Vox window: a text box with a large blue Speak button at the top, phrase groups and phrase buttons below.",
-      shotCap: "One tap on a phrase and Vox says it.",
-      whoH: "Who Vox is for",
-      who: "For people who <strong>can read and write but can't speak</strong>: after a stroke, with ALS/MND, after laryngeal surgery, or for a while after an operation. And for the family, caregivers and speech therapists who want to give them their voice back in a conversation.",
+      meta: "Windows 10 and 11 (64-bit) · free · open source · Android version in testing",
+      shotAlt: "The Speeka window: a text box with a large blue Speak button at the top, phrase groups and phrase buttons below.",
+      shotCap: "One tap on a phrase and Speeka says it.",
+      whoH: "Who Speeka is for",
+      who: "For anyone who <strong>can write but can't speak</strong>, for good or just for a while: after throat surgery, after a stroke, with ALS/MND, with a lost voice, or in a hospital abroad where nobody understands you. And for the family, caregivers and speech therapists who want to bring a voice back into the conversation.",
       featH: "What it does",
-      f1h: "A natural voice", f1: "The Supertonic neural voice sounds like a person, not a robot. Czech and English in the same voice.",
+      f1h: "A natural voice", f1: "The Supertonic neural voice sounds like a person, not a robot. The same voice in every language.",
       f2h: "Ready-made phrases", f2: "Yes, no, thank you, I'm thirsty, please call the nurse… Edit the phrase groups to suit you.",
-      f3h: "Czech and English", f3: "One tap switches the phrases and the voice. The app itself is in English or Czech. Handy in a hospital abroad.",
+      f3h: "Ten languages", f3: "Czech, English, Slovak, Polish, German, Spanish, French, Italian, Ukrainian and Russian. A translation into your own language can appear under each phrase, so you know what you are saying.",
       f4h: "Heard in a noisy room", f4: "Volume up to 200 % with a limiter, level matching and a clarity boost for listeners who are hard of hearing.",
       f5h: "History", f5: "What you said stays at hand. Tap it to say it again.",
       f6h: "Caregiver lock", f6: "Settings and phrase editing can be locked behind a simple sum, so nothing changes by accident.",
       f7h: "Large and readable", f7: "Three font sizes, dark and high-contrast light themes, big buttons.",
-      f8h: "Nothing leaves your computer", f8: "Vox runs fully offline. No account, no cloud, no tracking. What you type stays with you.",
+      f8h: "Nothing leaves your device", f8: "Speeka runs fully offline. No account, no cloud, no tracking. What you type stays with you.",
       startH: "Getting started",
-      s1h: "Install Vox", s1: "The easiest way is Microsoft Store: one-click install and updates arrive on their own. You'll then find Vox in the Start menu.",
+      s1h: "Install Speeka", s1: "The easiest way is Microsoft Store: one-click install and updates arrive on their own. You'll then find Speeka in the Start menu.",
       s2h: "Or without installing", s2: "The portable version is a ZIP file. It is fairly large because the voice is included. Right-click the file → Extract All and run Vox.exe. Put the folder anywhere, even on a USB stick.",
       s3h: "Say your first sentence", s3: "Type it in the box at the top and press Enter.",
       smart: "<strong>With the portable version</strong> Windows may show “Windows protected your PC” on first launch. The portable version doesn't have a paid code-signing certificate yet (the Microsoft Store version doesn't show this). Click <strong>More info</strong> and then <strong>Run anyway</strong>.",
-      foot1: "Vox is free software under the GPL-3.0 license. Made by <a href=\"https://github.com/martin-sedrmajer\">Martin Sedrmajer</a>.",
+      foot1: "Speeka is free software under the GPL-3.0 license. Made by <a href=\"https://github.com/martin-sedrmajer\">Martin Sedrmajer</a>.",
       foot2: "Source code and bug reports: <a href=\"https://github.com/martin-sedrmajer/vox-aac\">github.com/martin-sedrmajer/vox-aac</a>",
       foot3: "Voice: Supertonic 3 by Supertone Inc. (OpenRAIL-M license), converted by the sherpa-onnx project.",
       foot4: "Privacy policy"
@@ -277,9 +277,9 @@
     document.querySelectorAll("[data-i18n-html]").forEach((el) => { if (t[el.dataset.i18nHtml]) el.innerHTML = t[el.dataset.i18nHtml]; });
     document.querySelectorAll("[data-i18n-alt]").forEach((el) => { if (t[el.dataset.i18nAlt]) el.alt = t[el.dataset.i18nAlt]; });
     document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-    document.getElementById("shot").src = "img/vox-" + lang + ".webp";
+    document.getElementById("shot").src = "img/speeka-" + lang + ".webp";
     stopSample();
-    sample.src = "audio/vox-" + lang + ".mp3";
+    sample.src = "audio/speeka-" + lang + ".mp3";
     try { localStorage.setItem("vox.lang", lang); } catch (_) { /* bez úložiště */ }
   }
 
