@@ -31,7 +31,7 @@ nesleduje a nic z toho, co napíšete,
 neodchází z počítače.
 
 Speeka je otevřený software (GPL-3.0):
-https://github.com/martin-sedrmajer/vox-aac
+https://github.com/martin-sedrmajer/speeka
 
 Funkce (každá zvlášť do pole Features)
 -------
@@ -89,7 +89,7 @@ no tracking, and nothing you type ever leaves
 your computer.
 
 Speeka is free software (GPL-3.0):
-https://github.com/martin-sedrmajer/vox-aac
+https://github.com/martin-sedrmajer/speeka
 
 Features (one per Features field)
 --------
@@ -127,13 +127,13 @@ What's new in version 0.4.0
 === OSTATNÍ ===
 
 Zásady ochrany soukromí (Privacy policy URL):
-https://martin-sedrmajer.github.io/vox-aac/privacy.html
+https://martin-sedrmajer.github.io/speeka/privacy.html
 
 Web (Website):
-https://martin-sedrmajer.github.io/vox-aac/
+https://martin-sedrmajer.github.io/speeka/
 
 Podpora (Support contact):
-https://github.com/martin-sedrmajer/vox-aac/issues
+https://github.com/martin-sedrmajer/speeka/issues
 
 Kategorie: Produktivita (Productivity). Ne zdravotní
 kategorie: Speeka je komunikační pomůcka, ne zdravotní

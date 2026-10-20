@@ -10,7 +10,7 @@ with a lost voice, or in a hospital abroad where nobody understands you.
 The project used to be called Vox; the code still uses that name internally (`Vox.exe`,
 `Vox.Mobile`, the `Vox` namespace).
 
-**[Get it from Microsoft Store](https://apps.microsoft.com/detail/9P6NKBZXT3VX)** · [portable ZIP](https://github.com/martin-sedrmajer/vox-aac/releases/latest) · [website with a voice sample](https://martin-sedrmajer.github.io/vox-aac/)
+**[Get it from Microsoft Store](https://apps.microsoft.com/detail/9P6NKBZXT3VX)** · [portable ZIP](https://github.com/martin-sedrmajer/speeka/releases/latest) · [website with a voice sample](https://martin-sedrmajer.github.io/speeka/)
 
 ![The Speeka window: a text box with a large Speak button, phrase groups and phrase buttons](docs/img/speeka-en.webp)
 
