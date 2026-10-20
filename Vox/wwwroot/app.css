@@ -1,0 +1,298 @@
+/* ---------- barvy: tmavý a světlý vzhled ---------- */
+
+:root {
+  --bg: #0c1015;
+  --bg2: #121820;
+  --panel: #161e28;
+  --line: #232e3b;
+  --line2: #31404f;
+  --text: #e8edf3;
+  --dim: #93a1b1;
+  --urgent: #ff5a5a;
+  --urgent-bg: #3a1416;
+  --focus: #ffd166;
+  color-scheme: dark;
+}
+
+body.light {
+  --bg: #ffffff;
+  --bg2: #f2f4f7;
+  --panel: #ffffff;
+  --line: #c8d0da;
+  --line2: #66768a;
+  --text: #0a0d12;
+  --dim: #3a4654;
+  --urgent: #b00020;
+  --urgent-bg: #fde7ea;
+  --focus: #b35c00;
+  color-scheme: light;
+}
+
+/* ---------- barva zvýraznění (volba v Nastavení) ---------- */
+
+body, body[data-accent="blue"] { --accent: #2f8cff; --accent-dim: #1f64c4; --on-accent: #ffffff; }
+body[data-accent="teal"]   { --accent: #35d0bd; --accent-dim: #1f8f82; --on-accent: #04201c; }
+body[data-accent="amber"]  { --accent: #ffb547; --accent-dim: #b97a1c; --on-accent: #1d1200; }
+body[data-accent="coral"]  { --accent: #ff7a66; --accent-dim: #c4523f; --on-accent: #2a0a05; }
+body[data-accent="purple"] { --accent: #a98bff; --accent-dim: #7a5ad6; --on-accent: #160b33; }
+
+body.light, body.light[data-accent="blue"] { --accent: #0866d6; --accent-dim: #054ea6; --on-accent: #ffffff; }
+body.light[data-accent="teal"]   { --accent: #006b5f; --accent-dim: #00544a; --on-accent: #ffffff; }
+body.light[data-accent="amber"]  { --accent: #8f5300; --accent-dim: #6e4000; --on-accent: #ffffff; }
+body.light[data-accent="coral"]  { --accent: #b9381f; --accent-dim: #922a16; --on-accent: #ffffff; }
+body.light[data-accent="purple"] { --accent: #6236c8; --accent-dim: #4a27a0; --on-accent: #ffffff; }
+
+/* ---------- velikost písma: vše je v rem, takže roste celé rozhraní ---------- */
+
+html { font-size: 16px; }
+body.fs-m { font-size: 1rem; }
+html:has(body.fs-m) { font-size: 16px; }
+html:has(body.fs-l) { font-size: 19px; }
+html:has(body.fs-xl) { font-size: 23px; }
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.45;
+}
+
+body { display: flex; flex-direction: column; overflow: hidden; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+button {
+  background: var(--panel);
+  border: 2px solid var(--line2);
+  border-radius: 10px;
+  padding: .55rem 1rem;
+  cursor: pointer;
+  transition: border-color .12s, background .12s, transform .06s;
+}
+button:hover { border-color: var(--accent); }
+button:active { transform: scale(.98); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 700; }
+button.primary:hover { filter: brightness(1.08); }
+button.ghost { background: transparent; border-color: transparent; color: var(--dim); }
+button.ghost:hover { color: var(--text); border-color: var(--line2); }
+button.big { padding: .8rem 1.4rem; font-size: 1.1rem; }
+button.stop { background: var(--urgent); border-color: var(--urgent); color: #fff; font-weight: 700; }
+button.danger-outline { border-color: var(--urgent); color: var(--urgent); background: transparent; }
+
+input, select, textarea {
+  width: 100%;
+  background: var(--bg2);
+  border: 2px solid var(--line2);
+  border-radius: 8px;
+  padding: .5rem .7rem;
+}
+input[type=range] { padding: 0; border: none; background: transparent; accent-color: var(--accent); }
+input[type=checkbox] { width: 1.3rem; height: 1.3rem; accent-color: var(--accent); margin: 0 .6rem 0 0; flex: none; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- horní lišta ---------- */
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .6rem 1.2rem;
+  border-bottom: 2px solid var(--line);
+  background: var(--bg2);
+}
+.brand { display: flex; align-items: center; gap: .55rem; }
+.mark { width: 2rem; height: 2rem; }
+.mark svg { width: 100%; height: 100%; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mark .w1, .mark .w2, .mark .w3 { transform-origin: center; transform-box: fill-box; }
+body.speaking .mark .w1 { animation: wave .5s ease-in-out infinite alternate; }
+body.speaking .mark .w2 { animation: wave .5s ease-in-out .15s infinite alternate; }
+body.speaking .mark .w3 { animation: wave .5s ease-in-out .3s infinite alternate; }
+@keyframes wave { from { transform: scaleY(.45); } to { transform: scaleY(1.15); } }
+@media (prefers-reduced-motion: reduce) { body.speaking .mark path { animation: none !important; } }
+
+.name { font-weight: 800; letter-spacing: .18em; color: var(--accent); }
+.voice-status { flex: 1; min-width: 0; color: var(--dim); font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.voice-status.loading { color: var(--focus); }
+.voice-status.error { color: var(--urgent); }
+.top-actions { display: flex; gap: .5rem; }
+
+.lang, .seg { display: flex; border: 2px solid var(--line2); border-radius: 10px; overflow: hidden; flex: none; }
+.lang button, .seg button { border: none; border-radius: 0; background: transparent; padding: .45rem .9rem; font-weight: 700; color: var(--dim); }
+.lang button + button, .seg button + button { border-left: 2px solid var(--line2); }
+.lang button.active, .seg button.active { background: var(--accent); color: var(--on-accent); }
+.seg { margin-bottom: .5rem; }
+.seg button { flex: 1; font-weight: 600; }
+
+/* Flip UI: tlačítko Říct vpravo, skupiny i fráze zarovnané doprava */
+body.flipped .composer-actions { flex-direction: row-reverse; }
+body.flipped .cats { flex-direction: row-reverse; }
+body.flipped .board-head { flex-direction: row-reverse; }
+body.flipped .board-title { text-align: right; }
+body.flipped .board { direction: rtl; }
+body.flipped .tile { direction: ltr; align-items: flex-end; text-align: right; }
+body.flipped .tile.add { align-items: center; }
+
+/* ---------- hlavní část ---------- */
+
+.main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  padding: 1rem 1.2rem 1.2rem;
+}
+
+.composer { display: flex; flex-direction: column; gap: .6rem; }
+.composer textarea {
+  font-size: 1.45rem;
+  line-height: 1.35;
+  min-height: 5.5rem;
+  resize: vertical;
+  padding: .7rem .9rem;
+  border-radius: 12px;
+}
+.composer-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+.composer-actions .primary { flex: 1; min-width: 8rem; font-size: 1.3rem; }
+
+.cats { display: flex; gap: .5rem; flex-wrap: wrap; }
+.cats button { font-weight: 600; }
+.cats button.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.cats button.add { border-style: dashed; color: var(--dim); }
+
+.board-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .5rem; }
+.board-head { display: flex; align-items: center; gap: .5rem; }
+.board-title { flex: 1; color: var(--dim); font-size: .95rem; }
+.board-tools { display: flex; gap: .4rem; }
+body.editing #btnEdit { color: var(--accent); border-color: var(--accent); }
+
+.board {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  grid-auto-rows: minmax(5.2rem, auto);
+  gap: .7rem;
+  align-content: start;
+  padding: 2px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  gap: .25rem;
+  padding: .8rem 1rem;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 2px solid var(--line2);
+}
+.tile .label { font-size: 1.2rem; font-weight: 700; line-height: 1.2; }
+.tile .spoken { font-size: .85rem; color: var(--dim); line-height: 1.25; }
+.tile.urgent { background: var(--urgent-bg); border-color: var(--urgent); }
+/* podržení: tlačítko se pomalu podbarví, než se text vloží do pole */
+.tile { position: relative; overflow: hidden; }
+.tile::before { content: ""; position: absolute; inset: 0; background: var(--accent); opacity: .18; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.tile.holding::before { transform: scaleX(1); transition: transform .55s linear; }
+body.editing .tile.holding::before { transform: scaleX(0); transition: none; }
+.tile.urgent .label { color: var(--urgent); }
+.tile.add { border-style: dashed; color: var(--dim); align-items: center; justify-content: center; font-weight: 600; }
+/* Dlouhé zprávy nejvýš na tři řádky, ať historie zůstane přehledná. Dlaždice má výšku
+   na celé tři řádky a text se nesmí smrsknout, jinak by se poslední řádek usekl napůl. */
+.tile.history { min-height: calc(1.05rem * 1.2 * 3 + 1.6rem + 4px); }
+.tile.history .label {
+  font-weight: 500; font-size: 1.05rem; line-height: 1.2;
+  flex: none;
+  max-height: calc(1.2em * 3);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+body.editing .tile:not(.add) { border-style: dashed; }
+body.editing .tile:not(.add)::after { content: "✎ upravit"; font-size: .75rem; color: var(--accent); }
+
+.empty { grid-column: 1 / -1; color: var(--dim); padding: 1rem 0; }
+
+/* ---------- nastavení ---------- */
+
+.scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 20; }
+.drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(32rem, 100%);
+  background: var(--bg);
+  border-left: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  /* zavřený panel nesmí jít projít Tabem (zámek nastavení) */
+  visibility: hidden;
+  transition: transform .2s ease, visibility 0s linear .2s;
+  z-index: 30;
+}
+.drawer.open { transform: none; visibility: visible; transition: transform .2s ease; }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; padding: .8rem 1.2rem; border-bottom: 2px solid var(--line); }
+.drawer-head h2 { margin: 0; font-size: 1.2rem; }
+.drawer-body { flex: 1; overflow-y: auto; padding: .4rem 1.2rem 1rem; }
+.drawer-foot { padding: .8rem 1.2rem; border-top: 2px solid var(--line); }
+.drawer-foot .primary { width: 100%; padding: .75rem; }
+
+.block { padding: .8rem 0 .6rem; border-bottom: 1px solid var(--line); }
+.block:last-child { border-bottom: none; }
+.block h3 { margin: 0 0 .7rem; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+
+label { display: block; margin-bottom: .8rem; font-size: .92rem; color: var(--dim); }
+label > input, label > select, label > textarea { margin-top: .3rem; color: var(--text); }
+label.check { display: flex; align-items: center; color: var(--text); }
+.val { color: var(--accent); font-weight: 600; margin-left: .3rem; }
+.hint { color: var(--dim); font-size: .85rem; margin: .2rem 0 .6rem; }
+.hint.bad { color: var(--urgent); }
+.row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.row.between { justify-content: space-between; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+.opt { display: none; }
+.opt.show { display: block; }
+.grid2.opt.show { display: grid; }
+
+/* ---------- dialog ---------- */
+
+.dialog { position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, .5); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.dialog[hidden] { display: none; }
+.dialog-box { width: min(30rem, 100%); background: var(--bg); border: 2px solid var(--line2); border-radius: 14px; padding: 1.1rem 1.2rem; }
+.dialog-box h2 { margin: 0 0 .8rem; font-size: 1.15rem; }
+.lock-task { font-size: 2rem; font-weight: 800; text-align: center; margin: .6rem 0 .8rem; letter-spacing: .04em; }
+#lockAnswer { font-size: 1.6rem; text-align: center; margin-bottom: .6rem; }
+
+/* ---------- oznámení ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%; bottom: 1.2rem;
+  transform: translate(-50%, 1rem);
+  background: var(--panel);
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  padding: .55rem 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 50;
+  max-width: calc(100% - 2rem);
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 640px) {
+  .top { padding: .5rem .8rem; }
+  .main { padding: .8rem; }
+  .board { grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
+  .grid2 { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,40 @@
+﻿Vox - third-party components
+============================
+
+Vox itself is licensed under GPL-3.0-or-later with an additional permission
+for Microsoft Edge WebView2 (see LICENSE and LICENSE-EXCEPTION.txt). It bundles
+or uses the following components. Each remains under its own license; the full
+texts are available at the linked sources.
+
+Supertonic 3 (bundled voice model, voices\supertonic-3)
+  Copyright (c) Supertone Inc.
+  Model license: OpenRAIL-M (LICENSE-model-OpenRAIL-M.txt next to the model)
+  https://huggingface.co/Supertone/supertonic-3
+  The OpenRAIL-M use restrictions apply to the model and to audio generated
+  with it.
+  Converted for sherpa-onnx by the sherpa-onnx project:
+  https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models
+
+sherpa-onnx (speech synthesis engine)
+  Copyright (c) Xiaomi Corporation and contributors
+  License: Apache License 2.0
+  https://github.com/k2-fsa/sherpa-onnx
+
+ONNX Runtime (used by sherpa-onnx)
+  Copyright (c) Microsoft Corporation
+  License: MIT
+  https://github.com/microsoft/onnxruntime
+
+Microsoft Edge WebView2 SDK (user interface)
+  Copyright (c) Microsoft Corporation
+  License: see LICENSE.txt in the Microsoft.Web.WebView2 NuGet package
+  https://www.nuget.org/packages/Microsoft.Web.WebView2
+
+.NET runtime and System.Speech
+  Copyright (c) .NET Foundation and contributors
+  License: MIT
+  https://github.com/dotnet/runtime
+
+Optional voices added by the user (Kokoro, Piper and others) are not part of
+Vox and keep their own licenses. Some Piper voices allow non-commercial use
+only.

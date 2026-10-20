@@ -1,0 +1,21 @@
+Vox
+Copyright (C) 2026 Martin Sedrmajer
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version. See the file LICENSE.
+
+Additional permission under GNU GPL version 3 section 7
+
+If you modify this Program, or any covered work, by linking or combining it
+with the Microsoft Edge WebView2 SDK or the Microsoft Edge WebView2 Runtime
+(or a modified version of those libraries), containing parts covered by the
+terms of their Microsoft licenses, the licensors of this Program grant you
+additional permission to convey the resulting work. Corresponding Source for
+a non-source form of such a combination shall not include the source code for
+the parts of the WebView2 SDK or Runtime used as well as that of the covered
+work.
+
+The bundled voice model (Supertonic 3) and other third-party components are
+not covered by this license; see THIRD-PARTY-NOTICES.txt.

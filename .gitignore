@@ -1,0 +1,10 @@
+bin/
+obj/
+publish/
+dist/
+.vs/
+.vscode/
+*.user
+
+# soukromé poznámky, nepatří do veřejného repozitáře
+poznamky/
