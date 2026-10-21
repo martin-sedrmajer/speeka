@@ -459,7 +459,7 @@ public sealed class Bridge : IDisposable
             voicesDir = _platform.VoicesFolderDisplay,
             version = _platform.AppVersion,
             platform = _platform.Name,
-            languages = Languages.All.Select(l => new { code = l.Code, @short = l.Short, native = l.Native, cs = l.Cs, en = l.En })
+            languages = Languages.All.Select(l => new { code = l.Code, @short = l.Short, native = l.Native, cs = l.Cs, en = l.En, phrases = l.Phrases })
         });
     }
 

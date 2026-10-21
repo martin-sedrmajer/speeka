@@ -66,7 +66,7 @@ Hledají se ve dvou složkách: voices vedle Speeka.exe
 (přibalený Supertonic 3) a %APPDATA%\Vox\voices
 (hlasy, které si uživatel přidá sám). Každý hlas ve
 vlastní podsložce, formát pro sherpa-onnx.
-Přibalený je jen Supertonic: mluví všemi deseti
+Přibalený je jen Supertonic: mluví všemi 31
 jazyky stejným hlasem. Kokoro a Piper fungují dál, ale jen
 jako vlastní hlasy (nepřibalují se).
 Kokoro: složka obsahuje voices.bin; mluvčí se vybírá
@@ -132,18 +132,27 @@ nemají.
 JAZYK
 -----
 Dva nezávislé jazyky:
-- Jazyk řeči: deset jazyků (Core\Languages.cs):
-  čeština, angličtina, slovenština, polština,
-  němčina, španělština, francouzština, italština,
-  ukrajinština, ruština. Výběr v horní liště
-  (na telefonu jen zkratka „CZ ▾“) a v Nastavení,
-  naposledy použité jazyky nahoře (RecentLanguages).
-  Mění fráze na tlačítkách, názvy skupin a hlas.
-  Výběr v liště jde v Nastavení schovat.
+- Jazyk řeči: všech 31 jazyků Supertonicu
+  (Core\Languages.cs). Deset z nich má přeložené
+  připravené fráze: čeština, angličtina,
+  slovenština, polština, němčina, španělština,
+  francouzština, italština, ukrajinština, ruština.
+  Ostatní (Phrases = false) mají zatím jen pole
+  pro text a historii, bez skupin frází a bez úprav.
+  Výběr v horní liště (na telefonu jen zkratka
+  „CZ ▾“) a v Nastavení: nahoře pět naposledy
+  použitých jazyků (RecentLanguages), pod čarou
+  ostatní podle zkratky. Mění fráze na tlačítkách,
+  názvy skupin a hlas. Výběr v liště jde v Nastavení
+  schovat. Při prvním spuštění se vybere jazyk
+  systému, jen pokud má fráze, jinak angličtina.
+  Pole pro text a historie mají směr textu podle
+  obsahu (arabština zprava doleva).
 - Překlad pod frází (Nastavení → Jazyk): když se
   mluví jiným jazykem, ukáže se pod frází menším
   písmem její znění ve zvoleném jazyce (stejné
-  znění se neopakuje).
+  znění se neopakuje). Nabízí se jen jazyky
+  s frázemi.
 - Jazyk aplikace (Nastavení → Jazyk):
   čeština nebo angličtina pro veškeré ovládání,
   hlášky, stav hlasu a názvy mluvčích. Při prvním
@@ -180,7 +189,7 @@ Skupiny frází s velkými tlačítky. Fráze má znění
 Na tlačítku je a řekne se znění v zapnutém jazyce;
 když chybí, angličtina, pak čeština. Skupina má název
 česky (Name), anglicky (NameEn) a v dalších jazycích
-(Names). Výchozí fráze jsou přeložené do všech deseti
+(Names). Výchozí fráze jsou přeložené do deseti
 jazyků (Core\Phrases.cs, pořadí jako Languages.All);
 starším nastavením se překlady k výchozím frázím
 doplní samy. Překlady nekontroloval rodilý mluvčí.

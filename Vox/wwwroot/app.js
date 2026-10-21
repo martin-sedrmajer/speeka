@@ -30,6 +30,17 @@ function langInfo(code) {
   return state.languages.find((l) => l.code === code) || state.languages[1] || state.languages[0];
 }
 
+// Má jazyk připravené fráze? Ostatní jazyky (Languages.cs, Phrases = false) mají zatím jen pole
+// pro text a historii, než se fráze přeloží.
+function hasPhrases(code) {
+  return langInfo(code).phrases !== false;
+}
+
+// Ukazuje se historie: buď ji uživatel vybral, nebo jazyk nemá fráze.
+function inHistory() {
+  return state.activeCat === "history" || !hasPhrases(lang());
+}
+
 // Název jazyka do textů ovládání: „německy“ / „German“.
 function langName(code) {
   const l = langInfo(code);
@@ -66,6 +77,8 @@ const MSG = {
   addGroup: ["+ Skupina", "+ Group"],
   historyTitle: ["Naposledy řečené", "Recently said"],
   historyEmpty: ["Zatím tu nic není. Co řekneš, objeví se tady.", "Nothing here yet. What you say will appear here."],
+  noPhrasesYet: ["V tomto jazyce zatím nejsou připravené fráze. Napiš, co chceš říct, a objeví se to tady.",
+    "There are no ready-made phrases in this language yet. Type what you want to say and it will appear here."],
   editTitle: ["Úprava: klepni na frázi, nebo na název skupiny nahoře pro přejmenování", "Editing: tap a phrase, or tap the group name above to rename it"],
   missingLang: ["({0} chybí)", "({0} missing)"],
   noTranslation: ["Nezobrazovat", "Don't show"],
@@ -286,7 +299,7 @@ function onMessage(msg) {
 
     case "history":
       if (state.settings) state.settings.history = msg.items || [];
-      if (state.activeCat === "history") renderBoard();
+      if (inHistory()) renderBoard();
       break;
 
     case "voice.status":
@@ -342,11 +355,15 @@ function applyLook() {
 }
 
 // Výběr jazyka (v liště a v Nastavení): nahoře naposledy použité jazyky, pod čarou ostatní.
+const RECENT_LANGUAGES = 5;   // stejně jako Languages.RecentCount v C#
 function renderLanguagePickers() {
   const current = lang();
   const recent = [current, ...((state.settings && state.settings.recentLanguages) || [])]
-    .filter((c, i, all) => all.indexOf(c) === i && state.languages.some((l) => l.code === c));
-  const rest = state.languages.map((l) => l.code).filter((c) => !recent.includes(c));
+    .filter((c, i, all) => all.indexOf(c) === i && state.languages.some((l) => l.code === c))
+    .slice(0, RECENT_LANGUAGES + 1);
+  // ostatní podle zkratky (AR, BG, CZ…), ať se v dlouhém seznamu dá hledat
+  const rest = state.languages.map((l) => l.code).filter((c) => !recent.includes(c))
+    .sort((a, b) => langInfo(a).short.localeCompare(langInfo(b).short));
   for (const sel of document.querySelectorAll("select.lang-select")) {
     sel.textContent = "";
     for (const code of recent) sel.add(langOption(code));
@@ -371,8 +388,10 @@ for (const sel of document.querySelectorAll("select.lang-select")) {
   sel.addEventListener("change", () => {
     const code = sel.value;
     if (!state.settings || !code || code === lang()) return;
+    if (state.editing && !hasPhrases(code)) toggleEditing();   // jazyk bez frází nemá co upravovat
     state.settings.language = code;
-    state.settings.recentLanguages = [code, ...(state.settings.recentLanguages || []).filter((c) => c !== code)];
+    state.settings.recentLanguages = [code, ...(state.settings.recentLanguages || []).filter((c) => c !== code)]
+      .slice(0, RECENT_LANGUAGES);
     applyLook();
     renderAll();
     send({ type: "language.set", lang: code });
@@ -508,7 +527,8 @@ function renderAll() {
 function renderCats() {
   const nav = $("cats");
   nav.innerHTML = "";
-  for (const c of categories()) {
+  const phrases = hasPhrases(lang());
+  for (const c of phrases ? categories() : []) {
     const b = document.createElement("button");
     b.textContent = catName(c);
     b.classList.toggle("active", c.id === state.activeCat);
@@ -522,11 +542,11 @@ function renderCats() {
   }
   const hist = document.createElement("button");
   hist.textContent = t("history");
-  hist.classList.toggle("active", state.activeCat === "history");
+  hist.classList.toggle("active", inHistory());
   hist.addEventListener("click", () => { state.activeCat = "history"; renderCats(); renderBoard(); });
   nav.appendChild(hist);
 
-  if (state.editing) {
+  if (state.editing && phrases) {
     const add = document.createElement("button");
     add.className = "add";
     add.textContent = t("addGroup");
@@ -566,13 +586,14 @@ function renderBoard() {
   const board = $("board");
   board.innerHTML = "";
   // historie se neupravuje – tlačítko úprav by tam jen zabíralo místo
-  $("btnEdit").hidden = state.activeCat === "history";
+  const history = inHistory();
+  $("btnEdit").hidden = history;
 
-  if (state.activeCat === "history") {
+  if (history) {
     $("boardTitle").textContent = t("historyTitle");
     const items = state.settings.history || [];
     if (!items.length) {
-      board.appendChild(emptyNote(t("historyEmpty")));
+      board.appendChild(emptyNote(hasPhrases(lang()) ? t("historyEmpty") : t("noPhrasesYet")));
       return;
     }
     for (const t of items) {
@@ -697,12 +718,13 @@ function clampHistory() {
 let clampTimer = 0;
 window.addEventListener("resize", () => {
   clearTimeout(clampTimer);
-  clampTimer = setTimeout(() => { if (state.activeCat === "history") clampHistory(); }, 120);
+  clampTimer = setTimeout(() => { if (inHistory()) clampHistory(); }, 120);
 });
 
 function tile(label, spoken, urgent) {
   const b = document.createElement("button");
   b.className = "tile" + (urgent ? " urgent" : "");
+  b.dir = "auto";   // arabština se píše zprava doleva
   const l = document.createElement("span");
   l.className = "label";
   l.textContent = label;
@@ -992,7 +1014,8 @@ function fillSettingsForm(s) {
   const tr = $("translateTo");
   tr.textContent = "";
   tr.add(new Option(t("noTranslation"), ""));
-  for (const l of state.languages) tr.add(new Option(l.native, l.code));
+  // překlad pod frází jde jen do jazyků, které mají přeložené fráze
+  for (const l of state.languages) if (l.phrases !== false) tr.add(new Option(l.native, l.code));
   tr.value = s.translationLanguage || "";
   $("synthSteps").value = String([3, 6, 12].includes(s.synthesisSteps) ? s.synthesisSteps : 0);
   $("enterSpeaks").checked = s.enterSpeaks !== false;

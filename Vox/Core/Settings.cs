@@ -189,8 +189,11 @@ public sealed class SettingsStore
             if (v.Engine is not ("local" or "windows")) v.Engine = "local";
         }
         if (!Languages.IsSupported(s.Language)) s.Language = "en";
-        s.RecentLanguages = (s.RecentLanguages ?? new()).Where(Languages.IsSupported).Distinct().ToList();
-        if (!Languages.IsSupported(s.TranslationLanguage)) s.TranslationLanguage = "";
+        s.RecentLanguages = (s.RecentLanguages ?? new()).Where(Languages.IsSupported).Distinct()
+            .Take(Languages.RecentCount).ToList();
+        // překlad pod frází jde jen do jazyka, který má přeložené fráze
+        if (!Languages.IsSupported(s.TranslationLanguage) || !Languages.Get(s.TranslationLanguage).Phrases)
+            s.TranslationLanguage = "";
         s.SynthesisSteps = s.SynthesisSteps <= 0 ? 0 : Math.Clamp(s.SynthesisSteps, 2, 12);
         s.UiLanguage = Loc.Normalize(s.UiLanguage);
         if (s.Effect is not ("none" or "robot" or "radio")) s.Effect = "none";
