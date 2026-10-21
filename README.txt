@@ -133,12 +133,10 @@ JAZYK
 -----
 Dva nezávislé jazyky:
 - Jazyk řeči: všech 31 jazyků Supertonicu
-  (Core\Languages.cs). Deset z nich má přeložené
-  připravené fráze: čeština, angličtina,
-  slovenština, polština, němčina, španělština,
-  francouzština, italština, ukrajinština, ruština.
-  Ostatní (Phrases = false) mají zatím jen pole
-  pro text a historii, bez skupin frází a bez úprav.
+  (Core\Languages.cs), všechny s přeloženými
+  připravenými frázemi. Jazyk přidaný bez překladů
+  frází (Phrases: false) by měl jen pole pro text
+  a historii, bez skupin frází a bez úprav.
   Výběr v horní liště (na telefonu jen zkratka
   „CZ ▾“) a v Nastavení: nahoře pět naposledy
   použitých jazyků (RecentLanguages), pod čarou
@@ -189,8 +187,11 @@ Skupiny frází s velkými tlačítky. Fráze má znění
 Na tlačítku je a řekne se znění v zapnutém jazyce;
 když chybí, angličtina, pak čeština. Skupina má název
 česky (Name), anglicky (NameEn) a v dalších jazycích
-(Names). Výchozí fráze jsou přeložené do deseti
-jazyků (Core\Phrases.cs, pořadí jako Languages.All);
+(Names). Výchozí fráze jsou přeložené do všech 31
+jazyků: prvních deset v Core\Phrases.cs (pořadí jako
+Languages.All), dalších 21 v Core\PhrasesMore.cs
+(tabulky v pořadí anglických znění, napojují se
+podle angličtiny);
 starším nastavením se překlady k výchozím frázím
 doplní samy. Překlady nekontroloval rodilý mluvčí.
 Výchozí skupiny: Základní, Potřeby, Zdraví, Rozhovor

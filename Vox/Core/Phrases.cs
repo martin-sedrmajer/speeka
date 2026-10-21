@@ -1,13 +1,13 @@
 namespace Vox.Core;
 
 /// <summary>
-/// Výchozí fráze pro první spuštění ve všech jazycích řeči (pořadí jako v <see cref="Languages.All"/>:
-/// cs, en, sk, pl, de, es, fr, it, uk, ru). Výběr jazyka v aplikaci určuje, co je na tlačítkách
-/// a čím se mluví.
+/// Výchozí fráze pro první spuštění ve všech jazycích řeči. Tady prvních deset jazyků (pořadí jako
+/// v <see cref="Languages.All"/>: cs, en, sk, pl, de, es, fr, it, uk, ru), dalších 21 je v PhrasesMore.cs.
+/// Výběr jazyka v aplikaci určuje, co je na tlačítkách a čím se mluví.
 /// </summary>
-public static class Phrases
+public static partial class Phrases
 {
-    public static List<PhraseCategory> Defaults() => new()
+    public static List<PhraseCategory> Defaults() => WithMore(new()
     {
         Category(new[] { "Základní", "Basics", "Základné", "Podstawowe", "Grundlagen", "Básico", "Essentiel", "Base", "Основне", "Основное" },
             P("Ano.", "Yes.", "Áno.", "Tak.", "Ja.", "Sí.", "Oui.", "Sì.", "Так.", "Да."),
@@ -66,7 +66,7 @@ public static class Phrases
             P("Dobré ráno.", "Good morning.", "Dobré ráno.", "Dzień dobry.", "Guten Morgen.", "Buenos días.", "Bonjour.", "Buongiorno.", "Доброго ранку.", "Доброе утро."),
             P("Dobrou noc.", "Good night.", "Dobrú noc.", "Dobranoc.", "Gute Nacht.", "Buenas noches.", "Bonne nuit.", "Buonanotte.", "На добраніч.", "Спокойной ночи."),
             P("Kolik je hodin?", "What time is it?", "Koľko je hodín?", "Która godzina?", "Wie spät ist es?", "¿Qué hora es?", "Quelle heure est-il ?", "Che ore sono?", "Котра година?", "Который час?"))
-    };
+    });
 
     /// <summary>
     /// Doplní překlady do dalších jazyků k výchozím frázím a skupinám, které uživatel má z dřívějška
